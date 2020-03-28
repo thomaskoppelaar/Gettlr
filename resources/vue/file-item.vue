@@ -30,15 +30,15 @@
     <template v-if="fileMeta">
       <div class="meta">
         <template v-if="isDirectory">
-          <span class="directories">{{ countDirs }}</span>
-          <span class="files">{{ countFiles }}</span>
-          <span class="virtual-directories">{{ countVirtualDirs }}</span>
+          <!-- <span class="directories">{{ countDirs }}</span> -->
+            <span class="files">{{ countFiles }}</span>
+          <!-- <span class="virtual-directories">{{ countVirtualDirs }}</span> -->
         </template>
         <template v-else>
-          <span class="tex-indicator" v-if="isTex">TeX</span>
-          <span class="date">{{ getDate }}</span>
-          <span class="id" v-if="getId">{{ getId }}</span>
+          <!-- <span class="tex-indicator" v-if="isTex">TeX</span> -->
+          <!-- <span class="id" v-if="getId">{{ getId }}</span> -->
           <span class="tags" v-if="hasTags" v-bind:data-tippy-content="getTagList">#{{ countTags }}</span>
+          <span class="date">{{ getDate }}</span>
           <svg v-if="hasWritingTarget" class="target-progress-indicator" width="16" height="16" viewBox="-1 -1 2 2" v-bind:data-tippy-content="writingTargetInfo">
             <circle class="indicator-meter" cx="0" cy="0" r="1" shape-rendering="geometricPrecision"></circle>
             <path v-bind:d="writingTargetPath" fill="" class="indicator-value" shape-rendering="geometricPrecision"></path>
