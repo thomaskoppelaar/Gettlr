@@ -617,7 +617,8 @@
         "show_menu": "Show application menu",
         "show_toc": "Show the table of contents",
         "stats": "View stats",
-        "tag_cloud": "Tags",
+        "tag_cloud": "Look for tags",
+        "tag_manage": "Manage tags",
         "toggle_attachments": "View attachments"
     },
     "validation": {

@@ -23,6 +23,13 @@
           "title": "toolbar.tag_cloud"
         },
         {
+            "role":"button",
+            "class": "tag-manage",
+            "command": "tags-preferences",
+            "title": "toolbar.tag_manage"
+
+        },
+        {
             "role": "searchbar"
         },
         {
@@ -59,13 +66,6 @@
         {
             "role": "file-info",
             "title": "toolbar.file_info"
-        },
-        {
-            "role": "button",
-            "class": "toggle-attachments",
-            "command": "toggle-attachments",
-            "content": "{}",
-            "title": "toolbar.toggle_attachments"
         }
 
     ]
