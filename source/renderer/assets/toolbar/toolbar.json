@@ -17,13 +17,6 @@
         },
         {
             "role": "button",
-            "class":  "file-new",
-            "command": "file-new",
-            "content": "{}",
-            "title": "toolbar.file_new"
-        },
-        {
-            "role": "button",
             "class": "stats",
             "command": "show-stats",
             "content": "{}",
