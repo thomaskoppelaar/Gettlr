@@ -165,16 +165,6 @@
     },
     { "label": "menu.all_front", "role": "front" }
   ]},
-  "help": {
-    "label": "menu.labels.help",
-    "role": "help",
-    "submenu": [
-    {
-      "label": "menu.docs",
-      "accelerator": "F1",
-      "target": "https://docs.Gettlr.com/"
-    }
-  ]},
   "debug": {
     "label": "menu.labels.debug",
     "submenu": [
