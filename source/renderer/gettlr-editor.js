@@ -91,7 +91,6 @@ class GettlrEditor {
     this._wysiwyg = false // TODO TESTING
     this._renderTables = false
 
-    // Remembers the last mode when entering readability
     this._lastMode = MD_MODE // Default mode
 
     this._countChars = false // Whether or not Gettlr should count characters as words (e.g., for Chinese)
@@ -504,46 +503,6 @@ class GettlrEditor {
   // END constructor
 
   /**
-   * Enters the readability mode
-   */
-  enterReadability () {
-    this._lastMode = this._cm.getOption('mode')
-    this._cm.setOption('mode', {
-      name: 'readability',
-      algorithm: global.config.get('editor.readabilityAlgorithm')
-    })
-    this._cm.refresh()
-  }
-
-  /**
-   * Exits the readability mode.
-   */
-  exitReadability () {
-    this._cm.setOption('mode', this._lastMode)
-    this._cm.refresh()
-  }
-
-  /**
-   * Returns whether or not the editor is currently in readability mode
-   * @return {Boolean} Whether or not readability mode is active.
-   */
-  isReadabilityModeActive () {
-    let mode = this._cm.getOption('mode')
-    return mode.hasOwnProperty('name') && mode.name === 'readability'
-  }
-
-  /**
-   * Toggles the readability mode on or off, depending on its state.
-   */
-  toggleReadability () {
-    if (this.isReadabilityModeActive()) {
-      this.exitReadability()
-    } else {
-      this.enterReadability()
-    }
-  }
-
-  /**
     * Opens a file, i.e. replaced the editor's content
     * @param  {GettlrFile}   file The file to be renderer
     * @param  {Mixed}        flag An optional flag
@@ -599,7 +558,6 @@ class GettlrEditor {
     * @return {GettlrEditor} Chainability.
     */
   close () {
-    if (this.isReadabilityModeActive()) this.exitReadability()
     // Save current positions in case the file is being opened again later.
     if (this._currentHash != null) {
       this._positions[this._currentHash] = {

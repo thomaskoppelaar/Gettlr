@@ -11,7 +11,7 @@
     },
     "version": "0.0.1",
     "license": "GPL-3.0",
-    "description": "A powerful Markdown editor for researchers.",
+    "description": "A wonky Markdown editor for researchers based on Zettlr.",
     "main": "./source/main.js",
     "scripts": {
         "postinstall": "electron-builder install-app-deps",
@@ -25,8 +25,6 @@
         "less": "node scripts/less.js",
         "less:extract": "node scripts/extract-css.js",
         "handlebars": "node scripts/handlebars.js",
-        "lang:refresh": "node scripts/refresh-language.js",
-        "csl:refresh": "node scripts/update-csl.js",
         "reveal:build": "node scripts/update-reveal.js",
         "wp:dev": "cross-env NODE_ENV=development webpack",
         "wp:prod": "cross-env NODE_ENV=production webpack",

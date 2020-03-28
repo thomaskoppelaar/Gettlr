@@ -92,13 +92,6 @@
             "title": "toolbar.find"
         },
         {
-          "role": "button",
-          "class": "readability",
-          "command": "toggle-readability",
-          "content": "{}",
-          "title": "toolbar.readability"
-        },
-        {
             "role": "file-info",
             "title": "toolbar.file_info"
         },

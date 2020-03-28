@@ -31,7 +31,7 @@ describe('Utility#formatDate()', function () {
       assert.strictEqual(formatDate(test.input), test.expectedDE)
     })
     it(`should return ${test.expectedEN}`, function () {
-      global.config = { get: () => { return 'en-US' } }
+      global.config = { get: () => { return 'en-GB' } }
       assert.strictEqual(formatDate(test.input), test.expectedEN)
     })
   }

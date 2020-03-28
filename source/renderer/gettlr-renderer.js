@@ -46,7 +46,7 @@ class GettlrRenderer {
     this._currentFile = null
     this._currentDir = null
     this._paths = null
-    this._lang = 'en-US' // Default fallback
+    this._lang = 'en-GB' // Default fallback
 
     // Write translation data into renderer process's global var
     loadI18nRenderer()

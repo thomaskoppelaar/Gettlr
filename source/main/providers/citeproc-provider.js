@@ -337,7 +337,7 @@ class CiteprocProvider {
 
   /**
    * Reads in a language XML file and returns either its contents, or false (in
-   * which case the engine will fall back some times until it ends with en-US)
+   * which case the engine will fall back some times until it ends with en-GB)
    * @param  {string} lang The language to be loaded.
    * @return {Mixed}  Either the contents of the XML file, or false.
    */

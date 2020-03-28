@@ -161,7 +161,6 @@ class ConfigProvider extends EventEmitter {
         'countChars': false, // Set to true to enable counting characters instead of words
         'boldFormatting': '**', // Can be ** or __
         'italicFormatting': '_', // Can be * or _
-        'readabilityAlgorithm': 'dale-chall', // The algorithm to use with readability mode.
         'autoCorrect': {
           'active': true, // AutoCorrect is on by default
           'style': 'LibreOffice', // Default to LibreOffice style
@@ -520,7 +519,7 @@ class ConfigProvider extends EventEmitter {
     let locale = app.getLocale()
     let locSchema = bcp47.parse(locale)
     // Fail if the string was malformed
-    if (!locSchema.language) return 'en-US'
+    if (!locSchema.language) return 'en-GB'
 
     // Return the best match that the app can find (only the tag).
     return getLanguageFile(locale).tag

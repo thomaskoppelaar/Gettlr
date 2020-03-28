@@ -43,10 +43,10 @@ const FALLBACK = 'fallback'
 /**
  * This function loads a language JSON file specified by lang into the global i18n-object
  * It must be used only in the main process; renderer processes must call loadI18nRenderer() instead.
- * @param  {String} [lang='en-US'] The language to be loaded
+ * @param  {String} [lang='en-GB'] The language to be loaded
  * @return {Object}                The language metadata object.
  */
-function loadI18nMain (lang = 'en-US') {
+function loadI18nMain (lang = 'en-GB') {
   let file = getLanguageFile(lang) // Will return a working path
 
   // Cannot do this asynchronously, because it HAS to be loaded directly
@@ -54,9 +54,9 @@ function loadI18nMain (lang = 'en-US') {
   global.i18nRawData = fs.readFileSync(file.path, 'utf8')
   global.i18n = JSON.parse(global.i18nRawData)
 
-  // Also load the en-US fallback as we can be sure this WILL both stay
+  // Also load the en-GB fallback as we can be sure this WILL both stay
   // up to date and will be understood by most people.
-  let fallback = getLanguageFile('en-US') // Will return either the shipped or updated file
+  let fallback = getLanguageFile('en-GB') // Will return either the shipped or updated file
   global.i18nFallbackRawData = fs.readFileSync(fallback.path, 'utf8')
   global.i18nFallback = JSON.parse(global.i18nFallbackRawData)
 
@@ -117,10 +117,10 @@ function trans (string, ...args) {
 function getDictionaryFile (query) {
   // First of all, create the fallback object.
   let ret = {
-    'tag': 'en-US',
+    'tag': 'en-GB',
     'status': FALLBACK,
-    'aff': path.join(__dirname, '../../main/assets/dict/en-US/en-US.aff'),
-    'dic': path.join(__dirname, '../../main/assets/dict/en-US/en-US.dic')
+    'aff': path.join(__dirname, '../../main/assets/dict/en-GB/en-GB.aff'),
+    'dic': path.join(__dirname, '../../main/assets/dict/en-GB/en-GB.dic')
   }
 
   let lang = bcp47.parse(query)
@@ -143,9 +143,9 @@ function getDictionaryFile (query) {
 function getLanguageFile (query) {
   // First of all, create the fallback object.
   let ret = {
-    'tag': 'en-US',
+    'tag': 'en-GB',
     'status': FALLBACK,
-    'path': path.join(__dirname, '/en-US.json')
+    'path': path.join(__dirname, '/en-GB.json')
   }
 
   let lang = bcp47.parse(query)

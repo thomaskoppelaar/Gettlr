@@ -19,32 +19,6 @@
       <!-- General settings -->
       <div id="prefs-tabs-general">
         <div class="box-left">
-          <label for="app-lang">{{i18n "dialog.preferences.app_lang.title"}}
-          </label>
-          <select name="appLang" id="app-lang">
-            {{#each languages}}
-            <option value="{{this.bcp47}}" data-download="{{this.todownload}}" {{#ifCond this.bcp47 '=' ../appLang}}selected="selected"{{/ifCond}}>
-              {{#if this.toDownload}}
-              {{i18n "dialog.preferences.translations.download"}}
-              {{/if}}
-              {{i18n "dialog.preferences.app_lang." this.bcp47}}
-              {{#ifCond this.completion '<' 100}}
-              ({{this.completion}}%)
-              {{/ifCond}}
-            </option>
-            {{/each}}
-          </select>
-          <p id="app-lang-download-indicator">
-            <!--<a href="#" onclick="require('electron').shell.openExternal('https://translate.Gettlr.com/')">Get more languages &hellip;</a>-->
-          </p>
-          <hr>
-          <div class="cb-group">
-            <label class="cb-toggle">
-              <input type="checkbox" name="darkTheme" value="yes" id="darkTheme" {{#if darkTheme}}checked="checked"{{/if}}>
-              <div class="toggle"></div>
-            </label>
-            <label for="darkTheme">{{i18n "dialog.preferences.nightmode"}}</label>
-          </div>
           <div class="cb-group">
             <label class="cb-toggle">
               <input type="checkbox" name="fileMeta" value="yes" id="fileMeta" {{#if fileMeta}}checked="checked"{{/if}}>
@@ -66,41 +40,6 @@
             </label>
             <label for="alwaysReloadFiles">{{i18n "dialog.preferences.always_reload_files"}}</label>
           </div>
-
-          <hr>
-          <!-- Now the auto dark mode settings -->
-          <p>
-            {{i18n "dialog.preferences.auto_dark_mode_explanation"}}
-          </p>
-          <div class="cb-group">
-            <label class="radio-toggle">
-              <input type="radio" name="autoDarkMode" value="off" id="auto-dark-mode-off" {{#ifCond autoDarkMode '=' 'off'}}checked="checked"{{/ifCond}}>
-              <div class="toggle"></div>
-            </label>
-            <label for="auto-dark-mode-off">{{i18n "dialog.preferences.auto_dark_mode_off"}}</label>
-          </div>
-          <div class="cb-group">
-            <label class="radio-toggle">
-              <input type="radio" name="autoDarkMode" value="schedule" id="auto-dark-mode-schedule" {{#ifCond autoDarkMode '=' 'schedule'}}checked="checked"{{/ifCond}}>
-              <div class="toggle"></div>
-            </label>
-            <label for="auto-dark-mode-schedule">
-              {{i18n "dialog.preferences.auto_dark_mode_schedule"}}
-              <input type="text" class="inline time" pattern="\d{2}:\d{2}" title="{{i18n "dialog.preferences.auto_dark_mode_schedule_format"}}" value="{{ autoDarkModeStart }}" name="autoDarkModeStart">
-              &mdash;
-              <input type="text" class="inline time" pattern="\d{2}:\d{2}" title="{{i18n "dialog.preferences.auto_dark_mode_schedule_format"}}" value="{{ autoDarkModeEnd }}" name="autoDarkModeEnd">
-            </label>
-          </div>
-          {{#if hasOSDarkMode}}
-          <!-- Only for macOS: Enable system switching -->
-          <div class="cb-group">
-            <label class="radio-toggle">
-              <input type="radio" name="autoDarkMode" value="system" id="auto-dark-mode-system" {{#ifCond autoDarkMode '=' 'system'}}checked="checked"{{/ifCond}}>
-              <div class="toggle"></div>
-            </label>
-            <label for="auto-dark-mode-system">{{i18n "dialog.preferences.auto_dark_mode_system"}}</label>
-          </div>
-          {{/if}}
         </div>
         <div class="box-right">
           <p>
@@ -723,9 +662,6 @@
           <p>{{ i18n "dialog.preferences.autocorrect.quick_select_label" }}</p>
           <button class="mq-select" data-primary="0" data-secondary="0">{{ i18n "dialog.preferences.autocorrect.quick_select_none_label" }}</button>
           <button class="mq-select" data-primary="1" data-secondary="1">{{  i18n "dialog.preferences.app_lang.en-GB" }}</button>
-          <button class="mq-select" data-primary="3" data-secondary="3">{{  i18n "dialog.preferences.app_lang.de-DE" }}</button>
-          <button class="mq-select" data-primary="11" data-secondary="10">{{  i18n "dialog.preferences.app_lang.fr-FR" }}</button>
-          <button class="mq-select" data-primary="13" data-secondary="14">{{  i18n "dialog.preferences.app_lang.ja-JP" }}</button>
         </div>
         <div class="box-right">
           {{!-- Replacement Table --}}
