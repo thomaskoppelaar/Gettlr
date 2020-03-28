@@ -41,7 +41,7 @@ class TranslationProvider {
     }
 
     this.init().catch((err) => {
-      global.log(err.message, err)
+      global.log.error(err.message, err)
     })
   }
 
