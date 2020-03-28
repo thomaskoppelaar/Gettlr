@@ -20,7 +20,7 @@
 const citeproc = require('citeproc')
 const chokidar = require('chokidar') // We'll just use the one-liner to watch the library file.
 const { ipcMain } = require('electron')
-const Citr = require('@Gettlr/citr') // Parse the citations from the renderer
+const Citr = require('@gettlr/citr') // Parse the citations from the renderer
 const fs = require('fs')
 const path = require('path')
 const { trans } = require('../../common/lang/i18n')

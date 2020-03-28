@@ -1,20 +1,20 @@
 {
-    "name": "Gettlr",
+    "name": "gettlr",
     "homepage": "https://www.Gettlr.com",
     "author": {
-        "name": "Hendrik Erz",
-        "email": "Gettlr@mailbox.org"
+        "name": "Thomas Koppelaar",
+        "email": "thomaskoppelaar@protonmail.com"
     },
     "repository": {
         "type": "git",
-        "url": "git://github.com/Gettlr/Gettlr.git"
+        "url": "git://github.com/thomaskoppelaar/Gettlr.git"
     },
     "version": "1.6.0",
-    "description": "A powerful Markdown Editor with integrated tree view",
+    "description": "A modified version of Zettlr, with features hacked away.",
     "license": "GPL-3.0",
     "main": "main.js",
     "dependencies": {
-        "@Gettlr/citr": "^1.1.0",
+        "@gettlr/citr": "^1.1.0",
         "adm-zip": "^0.4.14",
         "archiver": "^3.1.1",
         "astrocite": "^0.16.3",
