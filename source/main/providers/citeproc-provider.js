@@ -3,7 +3,7 @@
  * @ignore
  * BEGIN HEADER
  *
- * Contains:    ZettlrCiteproc
+ * Contains:    GettlrCiteproc
  * CVM-Role:    Model
  * Maintainer:  Hendrik Erz
  * License:     GNU GPL v3
@@ -20,7 +20,7 @@
 const citeproc = require('citeproc')
 const chokidar = require('chokidar') // We'll just use the one-liner to watch the library file.
 const { ipcMain } = require('electron')
-const Citr = require('@zettlr/citr') // Parse the citations from the renderer
+const Citr = require('@Gettlr/citr') // Parse the citations from the renderer
 const fs = require('fs')
 const path = require('path')
 const { trans } = require('../../common/lang/i18n')
@@ -41,7 +41,7 @@ class CiteprocProvider {
   constructor () {
     global.log.verbose('Citeproc provider booting up ...')
     this._mainLibrary = ''
-    // The Zettlr internal preview of these citations will always use Chicago,
+    // The Gettlr internal preview of these citations will always use Chicago,
     // because (a) it's just a preview, and (b) Chicago is the default of Pandoc.
     this._styleID = 'chicago-author-date'
     this._lang = global.config.get('appLang')
@@ -241,6 +241,32 @@ class CiteprocProvider {
   }
 
   /**
+   * Verifies the integrity of the database, which means: Test through all keys
+   * and remove those that produce errors when processed by citeproc-js. Remove
+   * them to ensure that all other keys can be loaded, in the meantime.
+   */
+  _verifyIntegrity () {
+    let errors = []
+    for (let key of Object.keys(this._ids)) {
+      try {
+        // Try to make a citation "cluster" out of each single CiteKey
+        this._engine.makeCitationCluster([this._sys.retrieveItem(key)])
+      } catch (e) {
+        // In this case, to ensure correct loading of the rest of the
+        // database, remove the problematic cite key.
+        delete this._ids[key]
+        errors.push({ 'key': key, 'error': e })
+      }
+    }
+
+    // We all know that people can close dialog windows if they appear. If that
+    // happens, let's make sure the errors are at least in the log file!
+    if (errors.length > 0) global.log.error(`${errors.length} errors during database integrity check!`, errors)
+
+    return errors
+  }
+
+  /**
    * Initialises the processor with the current application language, the selected
    * style and the sys-processor. If that succeeds, this function sets the loaded
    * flag to true, so that requests can be filed.
@@ -253,6 +279,27 @@ class CiteprocProvider {
       // rest of the interface.
       this._engine = new citeproc.Engine(this._sys, this._mainStyle, this._lang)
       this._status = READY
+      // This function will make sure malformed keys will not remain in the
+      // database and can be reported to the user.
+      let errors = this._verifyIntegrity()
+      if (errors.length > 0) {
+        // Report errors
+        let report = {
+          'title': trans('gui.citeproc.error_report_title'),
+          'message': trans('gui.citeproc.error_report_message', errors.length),
+          'additionalInfo': errors.map(elem => elem.key + ': ' + elem.error).join('\n')
+        }
+
+        if (global.application.isBooting()) {
+          // In case the application is still booting, cache the message and delay sending
+          // TODO: This is goddamned ugly.
+          setTimeout(() => { global.ipc.notifyError(report) }, 5000)
+        } else {
+          // Otherwise immediately dispatch
+          global.ipc.notifyError(report)
+        }
+      }
+
       this._loadIdHint()
     } catch (e) {
       global.log.error(e.message, e)
@@ -339,7 +386,7 @@ class CiteprocProvider {
 
   /**
    * Unloads the complete engine
-   * @return {ZettlrCiteproc} Chainability
+   * @return {GettlrCiteproc} Chainability
    */
   unload () {
     this._status = NOT_LOADED
@@ -355,7 +402,7 @@ class CiteprocProvider {
 
   /**
    * (Re-)loads the complete engine
-   * @return {ZettlrCiteproc} Chainability
+   * @return {GettlrCiteproc} Chainability
    */
   load () {
     // First unload the engine if not already
