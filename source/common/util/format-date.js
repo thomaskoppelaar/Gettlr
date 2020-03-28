@@ -24,7 +24,6 @@ module.exports = function (dateObj) {
   // Why en-GB in this specific case? Because nobody understands the imperial
   // system, and at least the British have gotten that right.
   date.locale('en-GB')
-  date.locale(global.config.get('appLang'))
 
   return date.format('LLL')
 }

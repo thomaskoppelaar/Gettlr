@@ -55,14 +55,14 @@ class PreferencesDialog extends GettlrDialog {
       }
     }
 
-    for (let lang of data.availableLanguages) {
-      // If the language is already in the supportedLangs, we can jump over them
-      if (!data.languages.find(elem => elem.bcp47 === lang.bcp47)) {
-        let x = lang
-        x.toDownload = true
-        data.languages.push(x)
-      }
-    }
+    // for (let lang of data.availableLanguages) {
+    //   // If the language is already in the supportedLangs, we can jump over them
+    //   if (!data.languages.find(elem => elem.bcp47 === lang.bcp47)) {
+    //     let x = lang
+    //     x.toDownload = true
+    //     data.languages.push(x)
+    //   }
+    // }
     this._languages = data.languages // Save a reference for downloading etc.
 
     // Now prepopulate some stuff for autoCorrect
@@ -92,33 +92,6 @@ class PreferencesDialog extends GettlrDialog {
       e.preventDefault()
       // Give the GettlrBody object the results
       this.proceed(form.serializeArray())
-    })
-
-    // Download not-available languages on select
-    form.find('#app-lang').change((event) => {
-      let l = this._languages.find(elem => elem.bcp47 === $('#app-lang').val())
-      if (l.toDownload) {
-        let langLocalisation = trans('dialog.preferences.translations.downloading', trans(`dialog.preferences.app_lang.${l.bcp47}`))
-        // How does downloding work? Easy:
-        // 1. Block the element itself
-        // 2. Notify the user that a language will be downloaded
-        // 3. Tell the main process to download the language
-        // 4. Wait for the one IPC event announcing the download (or error)
-        // 5. Notify the user of the successful download
-        // 6. Unblock the element
-        $('#app-lang').prop('disabled', true) // Block
-        // Indicate downloading both on the element itself ...
-        $('#app-lang').find('option[value="' + l.bcp47 + '"]').text(langLocalisation)
-        // Override the option's value to ensure even if the user saves during
-        // download no non-available language is set.
-        $('#app-lang').find('option[value="' + l.bcp47 + '"]').val(global.config.get('appLang'))
-        // ... and beneath the select
-        $('#app-lang-download-indicator').text(langLocalisation)
-        $('#app-lang-download-indicator').append(this._spinner)
-        // Notify main
-        global.ipc.send('request-language', l.bcp47)
-        ipcRenderer.on('message', this._boundCallback) // Listen for the back event
-      }
     })
 
     // Functions for the search field of the dictionary list.
@@ -255,7 +228,7 @@ class PreferencesDialog extends GettlrDialog {
     let cfg = {}
 
     // Standard preferences
-    cfg['darkTheme'] = (data.find(elem => elem.name === 'darkTheme') !== undefined)
+    cfg['darkTheme'] = (data.find(elem => elem.name === 'darkTheme') !== true)
     cfg['fileMeta'] = (data.find(elem => elem.name === 'fileMeta') !== undefined)
     cfg['hideDirs'] = (data.find(elem => elem.name === 'hideDirs') !== undefined)
     cfg['alwaysReloadFiles'] = (data.find(elem => elem.name === 'alwaysReloadFiles') !== undefined)

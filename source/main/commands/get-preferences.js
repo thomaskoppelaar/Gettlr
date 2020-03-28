@@ -32,7 +32,7 @@ class GetPreferences extends GettlrCommand {
     toSend.supportedLangs = enumLangFiles().map(elem => elem.tag)
     toSend.availableDicts = enumDictFiles().map(elem => elem.tag)
     toSend.userDictionary = global.dict.getUserDictionary()
-    toSend.availableLanguages = global.translations.getAvailableLanguages()
+    //toSend.availableLanguages = global.translations.getAvailableLanguages()
     global.ipc.send('preferences', toSend)
   }
 }

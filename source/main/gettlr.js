@@ -210,8 +210,7 @@ class Gettlr {
       'dictionary': require('./providers/dictionary-provider'),
       'recentDocs': require('./providers/recent-docs-provider'),
       'tags': require('./providers/tag-provider'),
-      'css': require('./providers/css-provider'),
-      'translations': require('./providers/translation-provider')
+      'css': require('./providers/css-provider')
     }
   }
 
