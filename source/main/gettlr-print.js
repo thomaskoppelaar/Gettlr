@@ -22,13 +22,13 @@ class GettlrPrint {
    */
   constructor () {
     this._win = null
-    this._darkMode = global.config.get('darkTheme')
+    this._darkTheme = global.config.get('darkTheme')
 
     // Enable listening to config changes
     global.config.on('update', (e) => {
       if (!this._win) return // There's no window to alter
-      if (global.config.get('darkTheme') !== this._darkMode) {
-        this._darkMode = global.config.get('darkTheme')
+      if (global.config.get('darkTheme') !== this._darkTheme) {
+        this._darkTheme = global.config.get('darkTheme')
         this._win.webContents.send('toggle-theme')
       }
     })
@@ -78,7 +78,7 @@ class GettlrPrint {
       pathname: path.join(__dirname, '../print/index.htm'),
       protocol: 'file:',
       slashes: true,
-      search: `file=${file}&darkMode=${global.config.get('darkTheme')}`
+      search: `file=${file}&darkTheme=${global.config.get('darkTheme')}`
     }))
     // Only show window once it is completely initialized
     win.once('ready-to-show', () => { win.show() })

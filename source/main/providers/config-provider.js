@@ -98,11 +98,8 @@ class ConfigProvider extends EventEmitter {
       // Visible attachment filetypes
       'attachmentExtensions': COMMON_DATA.attachmentExtensions,
       // UI related options
-      'darkTheme': true, // TODO DEPRECATED to be renamed to darkMode
+      'darkTheme': true, 
       'alwaysReloadFiles': false, // Should Gettlr automatically load remote changes?
-      'autoDarkMode': 'off', // Possible values: 'off', 'system', 'schedule', 'auto'
-      'autoDarkModeStart': '22:00', // Switch into dark mode at this time
-      'autoDarkModeEnd': '06:00', // Switch to light mode at this time
       'fileMeta': true,
       'fileMetaTime': 'modtime', // The time to be displayed in file meta
       'hideDirs': true, // Should the app hide directories during global search?

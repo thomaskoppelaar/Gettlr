@@ -54,9 +54,9 @@ class GettlrQuicklookWindow {
     // Listen for the file event to receive the file to display from main.
     ipc.on('file', (e, file) => { this.init(file) })
 
-    // Also we need to know whether or not we should initiate in darkMode, and
+    // Also we need to know whether or not we should initiate in darkTheme, and
     // which theme to use initially.
-    if (url.searchParams.get('darkMode') === 'true') $('body').addClass('dark')
+    if (url.searchParams.get('darkTheme') === 'true') $('body').addClass('dark')
     $('link#theme-css').attr('href', $('link#theme-css').attr('href').replace(/bielefeld|berlin|frankfurt|karl-marx-stadt/, this._theme))
 
     ipc.on('custom-css', (evt, cnt) => {

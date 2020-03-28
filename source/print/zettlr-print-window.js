@@ -47,8 +47,8 @@ class GettlrPrintWindow {
     // Load the file into an iFrame.
     this.init(name)
 
-    // Also we need to know whether or not we should initiate in darkMode.
-    let dm = url.searchParams.get('darkMode')
+    // Also we need to know whether or not we should initiate in darkTheme.
+    let dm = url.searchParams.get('darkTheme')
     if (dm === 'true') $('body').addClass('dark')
 
     // Toggle the theme if there's an appropriate event

@@ -1,6 +1,5 @@
 {
    "darkTheme": "required|boolean|default:true",
-   "autoDarkMode": "required|string|in:off,system,schedule,auto|default:off",
    "fileMeta": "required|boolean|default:true",
    "sorting": "required|string|in:natural,ascii|default:natural",
    "sortingTime": "required|string|in:modtime,creationtime|default:modtime",

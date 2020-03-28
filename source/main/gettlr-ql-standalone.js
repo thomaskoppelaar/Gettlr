@@ -23,7 +23,7 @@ class GettlrQLStandalone {
    */
   constructor () {
     this._ql = []
-    this._darkMode = global.config.get('darkTheme')
+    this._darkTheme = global.config.get('darkTheme')
 
     // Enable listening to config changes
     global.config.on('update', (e) => {
@@ -82,7 +82,7 @@ class GettlrQLStandalone {
       pathname: path.join(__dirname, '../quicklook/index.htm'),
       protocol: 'file:',
       slashes: true,
-      search: `file=${file.hash}&darkMode=${global.config.get('darkTheme')}&theme=${global.config.get('display.theme')}`
+      search: `file=${file.hash}&darkTheme=${global.config.get('darkTheme')}&theme=${global.config.get('display.theme')}`
     }))
     // Only show window once it is completely initialized
     win.once('ready-to-show', () => { win.show() })

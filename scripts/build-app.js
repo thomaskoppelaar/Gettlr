@@ -95,7 +95,7 @@ const config = {
     target: (onlyDir) ? 'dir' : 'dmg',
     artifactName: artifactFilenameFormat,
     icon: 'resources/icons/icns/icon.icns',
-    darkModeSupport: true,
+    darkThemeSupport: true,
     hardenedRuntime: true,
     // This is not really necessary, but funfact: It's a bug, so we have to set it to false
     // Further info: https://github.com/electron-userland/electron-builder/issues/3828

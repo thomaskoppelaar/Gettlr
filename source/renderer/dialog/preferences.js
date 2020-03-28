@@ -39,7 +39,7 @@ class PreferencesDialog extends GettlrDialog {
     data.attachmentExtensions = data.attachmentExtensions.join(', ')
 
     // Determine the ability of the OS to switch to dark mode
-    data.hasOSDarkMode = [ 'darwin', 'win32' ].includes(process.platform)
+    data.hasOSDarkTheme = [ 'darwin', 'win32' ].includes(process.platform)
 
     data.languages = [] // Initialise
     // Make sure the languages are unique and
