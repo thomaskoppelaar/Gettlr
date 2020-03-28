@@ -10,13 +10,6 @@
         },
         {
             "role": "button",
-            "class": "dir-open",
-            "command": "dir-open",
-            "content": "{}",
-            "title": "toolbar.dir_open"
-        },
-        {
-            "role": "button",
             "class": "stats",
             "command": "show-stats",
             "content": "{}",
@@ -28,13 +21,6 @@
           "command": "show-tag-cloud",
           "content": "{}",
           "title": "toolbar.tag_cloud"
-        },
-        {
-            "role": "button",
-            "class": "preferences",
-            "command": "open-preferences",
-            "content": "{}",
-            "title": "toolbar.preferences"
         },
         {
             "role": "searchbar"
