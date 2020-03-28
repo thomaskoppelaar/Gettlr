@@ -547,20 +547,6 @@ class GettlrRendererIPC {
         this._app.getEditor().zoom(-1)
         break
 
-      // Updater
-      case 'update-check':
-        this.send('update-check')
-        break
-
-      case 'update-available':
-        this._app.getBody().displayUpdate(cnt)
-        break
-
-      // // About dialog
-      // case 'display-about':
-      //   this._app.getBody().displayAbout()
-      //   break
-
       case 'toggle-attachments':
         this._app.toggleAttachments()
         break

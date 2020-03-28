@@ -114,8 +114,7 @@ class GettlrRenderer {
       // Send an initial request to the reference database.
       this._ipc.send('citeproc-get-ids')
 
-      // Send an initial check for an update
-      this._ipc.send('update-check')
+      
     }, 100)
 
     // Here we can init actions and stuff to be done after the startup has finished

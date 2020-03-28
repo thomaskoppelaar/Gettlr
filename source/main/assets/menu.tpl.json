@@ -50,9 +50,6 @@
       "command": "print"
     },
     { "type": "separator" },
-    { "label": "menu.import_lang_file", "command": "import-lang-file" },
-    { "label": "menu.import_dict_file", "id": "openDictData" },
-    { "type": "separator" },
     {
       "label": "menu.rename_file",
       "accelerator": "CmdOrCtrl+R",
@@ -77,23 +74,16 @@
   "edit": {
     "label": "menu.labels.edit",
     "submenu": [
-    { "label": "menu.undo", "role": "undo" },
-    { "label": "menu.redo", "role": "redo" },
-    { "type": "separator" },
-    { "label": "menu.cut", "role": "cut" },
-    { "label": "menu.copy", "role": "copy" },
     {
       "label": "menu.copy_html",
       "accelerator": "CmdOrCtrl+Alt+C",
       "command": "copy-as-html"
     },
-    { "label": "menu.paste", "role": "paste" },
     {
       "label": "menu.paste_plain",
       "accelerator": "CmdOrCtrl+Shift+V",
       "command": "paste-as-plain"
     },
-    { "label": "menu.select_all", "role": "selectall" },
     { "type": "separator" },
     {
       "label": "menu.find_file",
@@ -109,8 +99,7 @@
       "label": "menu.generate_id",
       "accelerator": "CmdOrCtrl+L",
       "command": "insert-id"
-    },
-    { "mixin": "darwin_speech" }
+    }
   ]},
   "view": {
     "label": "menu.labels.view",
@@ -184,8 +173,7 @@
       "label": "menu.docs",
       "accelerator": "F1",
       "target": "https://docs.Gettlr.com/"
-    },
-    { "label": "menu.update", "command": "update-check" }
+    }
   ]},
   "debug": {
     "label": "menu.labels.debug",

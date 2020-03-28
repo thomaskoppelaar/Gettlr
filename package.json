@@ -58,7 +58,6 @@
         "on-change": "^1.8.1",
         "rimraf": "^3.0.2",
         "sanitize-filename": "^1.6.3",
-        "semver": "^7.1.3",
         "showdown": "^1.9.1",
         "tippy.js": "^6.0.3",
         "uuid": "^7.0.2",
