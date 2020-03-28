@@ -522,16 +522,6 @@
         "zoom_in": "Zoom in",
         "zoom_out": "Zoom out"
     },
-    "pomodoro": {
-        "mute": "Sound",
-        "phase": {
-            "long": "Break",
-            "short": "Short break",
-            "task": "Work"
-        },
-        "start": "Start",
-        "stop": "Stop"
-    },
     "system": {
         "all_files": "All Files",
         "cancel": "Cancel",
@@ -620,7 +610,6 @@
         "insert_link": "Insert a link",
         "insert_ol": "Make an ordered list",
         "insert_ul": "Make an itemized list",
-        "pomodoro": "Pomodoro-Timer",
         "preferences": "Open the settings dialog",
         "readability": "Toggle readability mode",
         "remove_fn": "Remove the footnote under the cursor",
