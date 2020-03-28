@@ -69,7 +69,7 @@ class AppearanceProvider extends EventEmitter {
     // Initially set the dark mode after startup, if the mode is set to "system"
     if (this._mode === 'system') {
       if (process.platform === 'win32') {
-        global.config.set('darkTheme', systemPreferences.isInvertedColorScheme())
+        global.config.set('darkTheme', true)
       } else if (process.platform === 'darwin') {
         global.config.set('darkTheme', nativeTheme.shouldUseDarkColors)
       }

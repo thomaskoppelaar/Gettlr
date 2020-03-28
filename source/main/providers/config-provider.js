@@ -98,7 +98,7 @@ class ConfigProvider extends EventEmitter {
       // Visible attachment filetypes
       'attachmentExtensions': COMMON_DATA.attachmentExtensions,
       // UI related options
-      'darkTheme': false, // TODO DEPRECATED to be renamed to darkMode
+      'darkTheme': true, // TODO DEPRECATED to be renamed to darkMode
       'alwaysReloadFiles': false, // Should Gettlr automatically load remote changes?
       'autoDarkMode': 'off', // Possible values: 'off', 'system', 'schedule', 'auto'
       'autoDarkModeStart': '22:00', // Switch into dark mode at this time
