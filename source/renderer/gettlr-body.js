@@ -24,7 +24,7 @@ const makeTemplate = require('../common/gettlr-template.js')
 const StatsDialog = require('./dialog/stats.js')
 const TagCloud = require('./dialog/tag-cloud.js')
 const UpdateDialog = require('./dialog/update.js')
-const AboutDialog = require('./dialog/about.js')
+//const AboutDialog = require('./dialog/about.js')
 const PasteImage = require('./dialog/paste-image.js')
 const PreferencesDialog = require('./dialog/preferences.js')
 const PDFPreferences = require('./dialog/pdf-preferences.js')
@@ -550,15 +550,15 @@ class GettlrBody {
     this._currentDialog.on('afterClose', (e) => { this._currentDialog = null })
   }
 
-  /**
-    * Displays the about dialog
-    */
-  displayAbout () {
-    if (this._currentDialog !== null) return // Only one dialog at a time
-    this._currentDialog = new AboutDialog()
-    this._currentDialog.init().open()
-    this._currentDialog.on('afterClose', (e) => { this._currentDialog = null })
-  }
+  // /**
+  //   * Displays the about dialog
+  //   */
+  // displayAbout () {
+  //   if (this._currentDialog !== null) return // Only one dialog at a time
+  //   this._currentDialog = new AboutDialog()
+  //   this._currentDialog.init().open()
+  //   this._currentDialog.on('afterClose', (e) => { this._currentDialog = null })
+  // }
 
   /**
    * This dialog is shown when the user has pasted an image from the clipboard.

@@ -1,6 +1,6 @@
 {
   "app": {
-    "label": "CUck",
+    "label": "gettlr",
     "submenu": [
       { "label": "menu.about", "role": "about" },
       { "mixin": "darwin_prefs" },
@@ -180,21 +180,7 @@
     "label": "menu.labels.help",
     "role": "help",
     "submenu": [
-    { "label": "menu.about", "command": "display-about" },
     {
-      "label": "menu.donate",
-      "target": "https://patreon.com/Gettlr"
-    },
-    {
-      "label": "menu.learn_more",
-      "target": "https://www.Gettlr.com/"
-    }, {
-      "label": "menu.pandoc",
-      "target": "https://github.com/jgm/pandoc/releases/latest"
-    }, {
-      "label": "menu.latex",
-      "target": "https://www.latex-project.org/get/#tex-distributions"
-    }, {
       "label": "menu.docs",
       "accelerator": "F1",
       "target": "https://docs.Gettlr.com/"
