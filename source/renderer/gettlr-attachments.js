@@ -38,10 +38,16 @@ class GettlrAttachments {
     this._container = $('<div>').prop('id', 'attachments').css('display', 'none')
     this._container.html(`<h1>${trans('gui.attachments')} <small id="open-dir-external" title="${trans('gui.attachments_open_dir')}">&#xf332;</small></h1>`)
     this._fileContainer = $('<div>').prop('id', 'files')
-    this._bibliographyContainer = $('<div>').prop('id', 'bibliography')
     this._container.append(this._fileContainer)
+
+    this._bibliographyContainer = $('<div>').prop('id', 'bibliography')
     this._container.append($('<h1>').text(trans('gui.citeproc.references_heading')))
     this._container.append(this._bibliographyContainer)
+
+    this._tocContainer = $('<div>').prop('id', 'tocContainer')
+    this._container.append($('<h1>').text(trans('gui.citeproc.toc_heading')))
+    this._container.append(this._tocContainer)
+    
     $('body').append(this._container)
     this._open = false
     this._attachments = []
@@ -57,6 +63,8 @@ class GettlrAttachments {
   toggle () {
     // Toggles the display of the attachment pane
     if (!this._open) {
+      this._tocContainer.text('')
+      this.displayTOC()
       this._container.css('display', '')
       this._container.animate({ 'right': '0%' })
     } else {
@@ -72,7 +80,6 @@ class GettlrAttachments {
     * Refreshes the list with new attachments on dir change.
     */
   refresh () {
-    this._fileContainer.text('')
     // Grab the newest attachments and refresh
     if (!this._renderer.getCurrentDir()) {
       this._fileContainer.append($('<p>').text(trans('gui.no_attachments')))
@@ -89,7 +96,7 @@ class GettlrAttachments {
           .attr('data-hash', a.hash)
           .attr('title', a.path) // Make sure the user can always see the full title
           .attr('href', a.path) // Necessary for native drag&drop functionality
-
+          
         // When dragging files from here onto the editor instance, users want
         // to have the appropriate link placed automatically, that is: images
         // should be wrapped in appropriate image tags, whereas documents
@@ -112,6 +119,91 @@ class GettlrAttachments {
         this._fileContainer.append(link)
       }
     }
+    
+
+  }
+
+/**
+    * Displays a table of content.
+    * @return {void} (Point of) No return.
+    */
+   displayTOC () {
+    if (this._renderer.getCurrentFile() === null) return
+    this._fileContainer.text('')
+
+    let toc = this._renderer.getEditor().buildTOC()
+
+    if (toc.length === 0) return
+
+    let idUniquifier = Date.now()
+
+    let cnt = $('<div id="toc-container-' + idUniquifier + '">')
+    let h1 = 0
+    let h2 = 0
+    let h3 = 0
+    let h4 = 0
+    let h5 = 0
+    let h6 = 0
+    for (let entry of toc) {
+      let level = ''
+      let i = 0
+      while (i < entry.level) {
+        level = level + '-'
+        i++
+      }
+
+      // cnt.append(
+      //   $('<a>').append($('<p>').text(level + " " + entry.text)
+      //     .attr('data-line', entry.line)
+      //     .attr('href', '#')
+      //     .css('white-space', 'pre-wrap')
+      //     .addClass('toc-link')
+      // ))
+
+      cnt.append(
+        $('<a>').append($('<p>').text(level + " " + entry.text)
+          .attr('data-line', entry.line)
+          .attr('href', '#')
+          .css('overflow-wrap', 'break-word')
+          .css('white-space', 'pre-wrap')
+          .css('padding', '0px')
+          .addClass('toc-link')
+      ))
+
+      this._tocContainer.append(cnt)
+    }
+
+    
+
+    // On click jump to line
+    $('.toc-link').click((event) => {
+      let elem = $(event.target)
+      this._renderer.getEditor().jtl(elem.attr('data-line'))
+    })
+
+    // Sortable
+    $('#toc-container-' + idUniquifier).sortable({
+      axis: 'y',
+      items: '> .toc-link',
+      update: (event, ui) => {
+        // The user has dropped the item someplace else.
+        let newIndex = ui.item.index()
+        let originalLine = parseInt(ui.item.attr('data-line'))
+        let sumLength = $('#toc-container-' + idUniquifier + ' > .toc-link').length
+        if (newIndex < sumLength - 1) {
+          let elementBelow = $('#toc-container-' + idUniquifier + ' > .toc-link').eq(newIndex + 1)
+          let aboveLine = parseInt(elementBelow.attr('data-line'))
+          this._renderer.getEditor().moveSection(originalLine, aboveLine)
+        } else {
+          this._renderer.getEditor().moveSection(originalLine, -1)
+        }
+
+        // Cool, now destroy the sortable, rebuild the TOC, and re-fill the div
+        // again.
+        $('#toc-container-' + idUniquifier).sortable('destroy')
+        this.displayTOC()
+      }
+    })
   }
 
   /**

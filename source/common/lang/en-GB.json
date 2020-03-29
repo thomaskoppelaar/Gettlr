@@ -381,6 +381,7 @@
         "citeproc": {
             "error_db": "The citation database could not be loaded",
             "no_db": "No library file loaded.",
+            "toc_heading": "Table of contents",
             "references_booting": "The citeproc engine is still booting up \u2026",
             "references_error": "Could not update bibliography!",
             "references_heading": "References",
