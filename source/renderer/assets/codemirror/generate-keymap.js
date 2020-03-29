@@ -27,34 +27,24 @@ module.exports = function (editor) {
   keymap['Alt-Up'] = 'swapLineUp'
   keymap['Alt-Down'] = 'swapLineDown'
 
-  // macOS only shortcuts
-  if (process.platform === 'darwin') {
-    keymap['Cmd-F'] = false // Disable the internal search
-    keymap['Alt-B'] = false // Disable word-backwarding on macOS (handled by Alt+ArrowLeft)
-    keymap['Alt-F'] = false // Disable word-forwarding on macOS (handled by Alt+ArrowRight)
-    keymap['Cmd-Shift-V'] = (cm) => { editor.pasteAsPlain() }
-    keymap['Cmd-Alt-R'] = 'insertFootnote'
-    keymap['Cmd-T'] = 'markdownMakeTaskList'
-    keymap['Shift-Cmd-C'] = 'markdownComment'
-    keymap['Shift-Cmd-I'] = 'markdownImage'
-    keymap['Cmd-K'] = 'markdownLink'
-    keymap['Cmd-I'] = 'markdownItalic'
-    keymap['Cmd-B'] = 'markdownBold'
-  } else {
-    // Windows/Linux/other shortcuts
-    keymap['Ctrl-F'] = false // Disable the internal search
-    // If homeEndBehaviour is true, use defaults (paragraph start/end), if it's
-    // false, use visible lines.
-    keymap['Home'] = (homeEndBehaviour) ? 'goLineStart' : 'goLineLeftSmart'
-    keymap['End'] = (homeEndBehaviour) ? 'golineEnd' : 'goLineRight'
-    keymap['Ctrl-Shift-V'] = (cm) => { editor.pasteAsPlain() }
-    keymap['Ctrl-Alt-F'] = 'insertFootnote'
-    keymap['Ctrl-T'] = 'markdownMakeTaskList'
-    keymap['Shift-Ctrl-C'] = 'markdownComment'
-    keymap['Shift-Ctrl-I'] = 'markdownImage'
-    keymap['Ctrl-K'] = 'markdownLink'
-    keymap['Ctrl-I'] = 'markdownItalic'
-    keymap['Ctrl-B'] = 'markdownBold'
+  
+  // Windows/Linux/other shortcuts
+  keymap['Ctrl-F'] = false // Disable the internal search
+  // If homeEndBehaviour is true, use defaults (paragraph start/end), if it's
+  // false, use visible lines.
+  keymap['Home'] = (homeEndBehaviour) ? 'goLineStart' : 'goLineLeftSmart'
+  keymap['End'] = (homeEndBehaviour) ? 'golineEnd' : 'goLineRight'
+  keymap['Ctrl-Shift-V'] = (cm) => { editor.pasteAsPlain() }
+  keymap['Ctrl-Alt-F'] = 'insertFootnote'
+  keymap['Ctrl-T'] = 'markdownMakeTaskList'
+  keymap['Shift-Ctrl-C'] = 'markdownComment'
+  keymap['Shift-Ctrl-I'] = 'markdownImage'
+  keymap['Ctrl-K'] = 'markdownLink'
+  keymap['Ctrl-I'] = 'markdownItalic'
+  keymap['Ctrl-B'] = 'markdownBold'
+  
+  keymap['Ctrl-/'] = (cm) => {
+    CodeMirror.commands['commentLine'](cm)
   }
 
   // Returns a CodeMirror keymap for the main editor, aware of potential settings.

@@ -209,6 +209,11 @@ const { clipboard } = require('electron');
     cm.doc.setCursor(finalCursor)
   }
 
+  CodeMirror.commands.commentLine = function (cm) {
+    if (cm.getOption('disableInput')) return CodeMirror.Pass
+    markdownBlock(cm, '//')
+  }
+
   // Either encapsulates the selection bold or "un-bolds" or inserts new
   // Bold-characters
   CodeMirror.commands.markdownBold = function (cm) {
