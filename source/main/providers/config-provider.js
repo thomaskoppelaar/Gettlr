@@ -603,9 +603,8 @@ class ConfigProvider extends EventEmitter {
     * @return {void}                      Does not return anything.
     */
   update (newcfg, oldcfg = this.config) {
-    // Overwrite all given attributes (and leave the not given in place)
-    // This will ensure sane defaults.
-    for (var prop in oldcfg) {
+    try {
+      for (var prop in oldcfg) {
       if (newcfg.hasOwnProperty(prop)) {
         // We have some variable-length arrays that only contain
         // strings, e.g. we cannot update them using update()
@@ -619,6 +618,12 @@ class ConfigProvider extends EventEmitter {
     }
 
     this.emit('update') // Emit an event to all listeners
+    } catch (err) {
+      global.log.error(err)
+    }
+    // Overwrite all given attributes (and leave the not given in place)
+    // This will ensure sane defaults.
+    
   }
 
   /**

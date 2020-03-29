@@ -25,7 +25,7 @@
         {
             "role":"button",
             "class": "tag-manage",
-            "command": "tags-preferences",
+            "command": "open-tags-preferences",
             "title": "toolbar.tag_manage"
 
         },

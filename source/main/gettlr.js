@@ -287,9 +287,10 @@ class Gettlr {
     if (cmd) {
       // Return the return value of the command, if there is any
       try {
+        global.log.verbose("gettlr.js - runCommand: " + cmd + evt + arg)
         return cmd.run(evt, arg)
       } catch (e) {
-        global.log.error(e.message, e)
+        global.log.error("gettlr.js - runCommand: " + e.message, e)
         // Re-throw for the IPC to handle a fall-through
         throw e
       }

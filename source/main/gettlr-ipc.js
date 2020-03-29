@@ -165,6 +165,7 @@ class GettlrIPC {
       let res = this._app.runCommand(cmd, cnt)
       return res // In case the command has run there's no need to handle it.
     } catch (e) {
+      global.log.error("gettlr-ipc - handleEvent: " + e)
       // Simple fall through
     }
 
@@ -276,7 +277,12 @@ class GettlrIPC {
         break
 
       case 'update-tags':
-        global.tags.update(cnt)
+        try {
+          global.tags.update(cnt)
+        } catch (e) {
+          global.log("gettlr-ipc - update-tags: " + e)
+        }
+        
         // fall through
       case 'get-tags':
         this.send('set-tags', global.tags.getSpecialTags())

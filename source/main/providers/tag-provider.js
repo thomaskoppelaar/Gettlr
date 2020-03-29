@@ -193,6 +193,7 @@ class TagProvider {
    * @param {String} desc  A short description.
    */
   set (name, color, desc) {
+    global.log.verbose("Set tag:" + name + " " + color  + " " + desc)
     let tag = this.get(name)
     // Either overwrite or add
     if (tag) {
@@ -212,6 +213,7 @@ class TagProvider {
    * @return {Boolean} Whether or not all tags succeeded.
    */
   update (tags) {
+    try {
     this._tags = []
     let retVal = true
     for (let t of tags) {
@@ -226,6 +228,10 @@ class TagProvider {
     this._save()
 
     return retVal
+  } catch (e) {
+    global.log.error("tag-provider - update: " +e )
+  }
+
   }
 }
 
