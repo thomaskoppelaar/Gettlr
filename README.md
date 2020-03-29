@@ -2,7 +2,7 @@
   Gettlr 
 </h1>
 
-<p align="center" ><strong>A Markdown Editor for ~~the 21<sup>st</sup> century~~ mostly me</strong>.</p>
+<p align="center" ><strong>A Markdown Editor for mostly me</strong>.</p>
 
 
 <p align="center">
