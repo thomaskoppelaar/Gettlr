@@ -181,7 +181,7 @@
         "accelerator": { "darwin": "Alt+Command+I", "other": "Ctrl+Shift+I" },
         "id": "toggleDevTools"
       }, {
-        "label": "Open Logs",
+        "label": "menu.open_logs",
         "accelerator": "CmdOrCtrl+Alt+Shift+L",
         "id": "openLogViewer"
       }
