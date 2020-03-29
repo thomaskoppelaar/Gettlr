@@ -72,7 +72,6 @@
 
       let hTag = document.createElement('span')
       hTag.className = 'heading-tag'
-      hTag.textContent = 'h' + headingLevel
 
       let textMarker = cm.markText(
         curFrom, curTo,
