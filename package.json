@@ -15,7 +15,7 @@
     "main": "./source/main.js",
     "scripts": {
         "postinstall": "electron-builder install-app-deps",
-        "start": "electron .",
+        "start": "electron . --enable-logging",
         "build:quick": "node scripts/build-app.js --dir",
         "release:this": "node scripts/build-app.js",
         "release:mac": "node scripts/build-app.js --mac",
