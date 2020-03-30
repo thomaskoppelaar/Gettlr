@@ -99,7 +99,8 @@
       "label": "menu.generate_id",
       "accelerator": "CmdOrCtrl+L",
       "command": "insert-id"
-    }
+    },
+    { "mixin": "darwin_speech" }
   ]},
   "view": {
     "label": "menu.labels.view",
