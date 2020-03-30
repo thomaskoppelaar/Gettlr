@@ -152,15 +152,6 @@ class GettlrAttachments {
         i++
       }
 
-
-      // cnt.append(
-      //   $('<a>').append($('<p>').text(level + " " + entry.text)
-      //     .attr('data-line', entry.line)
-      //     .attr('href', '#')
-      //     .css('white-space', 'pre-wrap')
-      //     .addClass('toc-link')
-      // ))
-
       cnt.append(
         $('<a>')
         .text(level + entry.text)

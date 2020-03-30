@@ -17,7 +17,7 @@
   // Pandoc citeproc.
   var citationRE = /(\[[^[\]]*@[^[\]]+\])|(?<=\s|^)(@[a-z0-9_:.#$%&\-+?<>~/]+)/gi
   var citeMarkers = [] // CiteMarkers
-  var Citr = require('@gettlr/citr')
+  var Citr = require('@zettlr/citr')
 
   CodeMirror.commands.markdownRenderCitations = function (cm) {
     let match

@@ -30,11 +30,11 @@
         "wp:prod": "cross-env NODE_ENV=production webpack",
         "test": "mocha",
         "lint": "eslint \"./source/**/*.js\" -f html -o eslint_report.htm",
-		"tk-reload": "npm run less && npm run less:extract && npm run handlebars && npm run wp:prod && npm run reveal:build",
-		"tk-start": "npm run tk-reload && npm run start"
+        "tk-reload": "npm run less && npm run less:extract && npm run handlebars && npm run wp:prod && npm run reveal:build",
+        "tk-start": "npm run tk-reload && npm run start"
     },
     "dependencies": {
-        "@gettlr/citr": "^1.1.0",
+        "@zettlr/citr": "^1.1.0",
         "adm-zip": "^0.4.14",
         "archiver": "^3.1.1",
         "astrocite": "^0.16.3",
