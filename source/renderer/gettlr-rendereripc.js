@@ -467,6 +467,7 @@ class GettlrRendererIPC {
         break
 
       case 'open-tags-preferences':
+        console.log("renderer-ipc - open-tags-preferences")
         this.send('get-tags-preferences')
         break
 
@@ -491,7 +492,12 @@ class GettlrRendererIPC {
         break
 
       case 'set-tags':
-        global.store.set('tags', cnt)
+        try {
+          global.store.set('tags', cnt)
+        } catch(e) {
+          console.log("gettlr-renderer - set-tags: " + e)
+        }
+        
         break
 
       // Update the editor's tag database

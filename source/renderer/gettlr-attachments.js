@@ -148,9 +148,10 @@ class GettlrAttachments {
       let level = ''
       let i = 0
       while (i < entry.level) {
-        level = level + '-'
+        level += '  '
         i++
       }
+
 
       // cnt.append(
       //   $('<a>').append($('<p>').text(level + " " + entry.text)

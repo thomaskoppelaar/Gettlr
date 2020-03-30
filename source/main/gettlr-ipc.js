@@ -46,6 +46,7 @@ class GettlrIPC {
     ipc.on('message', (event, arg) => {
       // We always need a command
       if (!arg.hasOwnProperty('command')) {
+        global.log.error('gettlr-ipc - message does not have property command')
         global.log.error(trans('system.no_command'), arg)
         return
       }
@@ -165,7 +166,6 @@ class GettlrIPC {
       let res = this._app.runCommand(cmd, cnt)
       return res // In case the command has run there's no need to handle it.
     } catch (e) {
-      global.log.error("gettlr-ipc - handleEvent: " + e)
       // Simple fall through
     }
 

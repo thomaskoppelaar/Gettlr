@@ -282,22 +282,25 @@ class Gettlr {
   runCommand (evt, arg) {
     // This function will be called from IPC with a command and an arg.
     // First find the command
-    let cmd = this._commands.find(elem => elem.respondsTo(evt))
-
+    let cmd = ''
+    try {
+      cmd = this._commands.find(elem => elem.respondsTo(evt))
+    } catch(e) {
+      console.error('gettlr - runcommand: ' + e)
+    }
     if (cmd) {
       // Return the return value of the command, if there is any
       try {
-        global.log.verbose("gettlr.js - runCommand: " + cmd + evt + arg)
         return cmd.run(evt, arg)
       } catch (e) {
         global.log.error("gettlr.js - runCommand: " + e.message, e)
         // Re-throw for the IPC to handle a fall-through
         throw e
       }
-    } else {
+    } 
+    else {
       // We need to throw, because the return value of a successful command run
       // may very well also evaluate to null, undefined, false or anything else.
-      global.log.verbose('No command registered with the application for command ' + evt)
       throw new Error('No command registered with the application for command ' + evt)
     }
   }

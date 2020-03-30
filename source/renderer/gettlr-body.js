@@ -505,10 +505,15 @@ class GettlrBody {
     * @return {void}       Nothing to return.
     */
   displayTagsPreferences (prefs) {
-    if (this._currentDialog !== null) return // Only one dialog at a time
-    this._currentDialog = new TagsPreferences()
-    this._currentDialog.init(prefs).open()
-    this._currentDialog.on('afterClose', (e) => { this._currentDialog = null })
+    try {
+      if (this._currentDialog !== null) return // Only one dialog at a time
+      this._currentDialog = new TagsPreferences()
+      this._currentDialog.init(prefs).open()
+      this._currentDialog.on('afterClose', (e) => { this._currentDialog = null })
+    } catch (e) {
+      console.log('gettlr-body.displayTagsPreferences - err: ' + e)
+    }
+    
   }
 
   /**
