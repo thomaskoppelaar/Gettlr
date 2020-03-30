@@ -129,7 +129,7 @@ class GettlrAttachments {
     */
    displayTOC () {
     if (this._renderer.getCurrentFile() === null) return
-    this._fileContainer.text('')
+    this._tocContainer.text('')
 
     let toc = this._renderer.getEditor().buildTOC()
 
@@ -162,19 +162,20 @@ class GettlrAttachments {
       // ))
 
       cnt.append(
-        $('<a>').append($('<p>').text(level + " " + entry.text)
+        $('<a>')
+        .text(level + entry.text)
           .attr('data-line', entry.line)
           .attr('href', '#')
+          .addClass('toc-link')
           .css('overflow-wrap', 'break-word')
           .css('white-space', 'pre-wrap')
           .css('padding', '0px')
-          .addClass('toc-link')
-      ))
+      )
 
-      this._tocContainer.append(cnt)
+      
     }
 
-    
+    this._tocContainer.append(cnt)
 
     // On click jump to line
     $('.toc-link').click((event) => {

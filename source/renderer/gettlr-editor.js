@@ -372,6 +372,9 @@ class GettlrEditor {
           this.updateCitations()
         }, 500)
       }
+
+      if(this._renderer._attachments._open) this._renderer._attachments.displayTOC()
+      
     })
 
     // On cursor activity (not the mouse one but the text one), render all
