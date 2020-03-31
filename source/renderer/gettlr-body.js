@@ -775,102 +775,102 @@ class GettlrBody {
     })
   }
 
-  /**
-    * Displays a table of content.
-    * @return {void} (Point of) No return.
-    */
-  displayTOC () {
-    if (this._currentPopup) this._currentPopup.close(true) // Prevent multiple popups
-    if (this._renderer.getCurrentFile() === null) return
+  // /**
+  //   * Displays a table of content.
+  //   * @return {void} (Point of) No return.
+  //   */
+  // displayTOC () {
+  //   if (this._currentPopup) this._currentPopup.close(true) // Prevent multiple popups
+  //   if (this._renderer.getCurrentFile() === null) return
 
-    let toc = this._renderer.getEditor().buildTOC()
+  //   let toc = this._renderer.getEditor().buildTOC()
 
-    if (toc.length === 0) return
+  //   if (toc.length === 0) return
 
-    let idUniquifier = Date.now()
+  //   let idUniquifier = Date.now()
 
-    let cnt = $('<div id="toc-container-' + idUniquifier + '">')
-    let h1 = 0
-    let h2 = 0
-    let h3 = 0
-    let h4 = 0
-    let h5 = 0
-    let h6 = 0
-    for (let entry of toc) {
-      let level = ''
-      switch (entry.level) {
-        case 1:
-          h1++
-          h2 = h3 = h4 = h5 = h6 = 0
-          level = h1
-          break
-        case 2:
-          h2++
-          h3 = h4 = h5 = h6 = 0
-          level = [ h1, h2 ].join('.')
-          break
-        case 3:
-          h3++
-          h4 = h5 = h6 = 0
-          level = [ h1, h2, h3 ].join('.')
-          break
-        case 4:
-          h4++
-          h5 = h6 = 0
-          level = [ h1, h2, h3, h4 ].join('.')
-          break
-        case 5:
-          h5++
-          h6 = 0
-          level = [ h1, h2, h3, h4, h5 ].join('.')
-          break
-        case 6:
-          h6++
-          level = [ h1, h2, h3, h4, h5, h6 ].join('.')
-      }
+  //   let cnt = $('<div id="toc-container-' + idUniquifier + '">')
+  //   let h1 = 0
+  //   let h2 = 0
+  //   let h3 = 0
+  //   let h4 = 0
+  //   let h5 = 0
+  //   let h6 = 0
+  //   for (let entry of toc) {
+  //     let level = ''
+  //     switch (entry.level) {
+  //       case 1:
+  //         h1++
+  //         h2 = h3 = h4 = h5 = h6 = 0
+  //         level = h1
+  //         break
+  //       case 2:
+  //         h2++
+  //         h3 = h4 = h5 = h6 = 0
+  //         level = [ h1, h2 ].join('.')
+  //         break
+  //       case 3:
+  //         h3++
+  //         h4 = h5 = h6 = 0
+  //         level = [ h1, h2, h3 ].join('.')
+  //         break
+  //       case 4:
+  //         h4++
+  //         h5 = h6 = 0
+  //         level = [ h1, h2, h3, h4 ].join('.')
+  //         break
+  //       case 5:
+  //         h5++
+  //         h6 = 0
+  //         level = [ h1, h2, h3, h4, h5 ].join('.')
+  //         break
+  //       case 6:
+  //         h6++
+  //         level = [ h1, h2, h3, h4, h5, h6 ].join('.')
+  //     }
 
-      cnt.append(
-        $('<a>').text(level + '. ' + entry.text)
-          .attr('data-line', entry.line)
-          .attr('href', '#')
-          .addClass('toc-link')
-      )
-    }
+  //     cnt.append(
+  //       $('<a>').text(level + '. ' + entry.text)
+  //         .attr('data-line', entry.line)
+  //         .attr('href', '#')
+  //         .addClass('toc-link')
+  //     )
+  //   }
 
-    this._currentPopup = popup($('.button.show-toc'), cnt)
+  //   this._currentPopup = popup($('.button.show-toc'), cnt)
 
-    // On click jump to line
-    $('.toc-link').click((event) => {
-      let elem = $(event.target)
-      this._renderer.getEditor().jtl(elem.attr('data-line'))
-    })
+  //   // On click jump to line
+  //   $('.toc-link').click((event) => {
+  //     let elem = $(event.target)
+  //     this._renderer.getEditor().jtl(elem.attr('data-line'))
+  //   })
 
-    // Sortable
-    $('#toc-container-' + idUniquifier).sortable({
-      axis: 'y',
-      items: '> .toc-link',
-      update: (event, ui) => {
-        // The user has dropped the item someplace else.
-        let newIndex = ui.item.index()
-        let originalLine = parseInt(ui.item.attr('data-line'))
-        let sumLength = $('#toc-container-' + idUniquifier + ' > .toc-link').length
-        if (newIndex < sumLength - 1) {
-          let elementBelow = $('#toc-container-' + idUniquifier + ' > .toc-link').eq(newIndex + 1)
-          let aboveLine = parseInt(elementBelow.attr('data-line'))
-          this._renderer.getEditor().moveSection(originalLine, aboveLine)
-        } else {
-          this._renderer.getEditor().moveSection(originalLine, -1)
-        }
+  //   // Sortable
+  //   $('#toc-container-' + idUniquifier).sortable({
+  //     axis: 'y',
+  //     items: '> .toc-link',
+  //     update: (event, ui) => {
+  //       // The user has dropped the item someplace else.
+  //       let newIndex = ui.item.index()
+  //       let originalLine = parseInt(ui.item.attr('data-line'))
+  //       let sumLength = $('#toc-container-' + idUniquifier + ' > .toc-link').length
+  //       if (newIndex < sumLength - 1) {
+  //         let elementBelow = $('#toc-container-' + idUniquifier + ' > .toc-link').eq(newIndex + 1)
+  //         let aboveLine = parseInt(elementBelow.attr('data-line'))
+  //         this._renderer.getEditor().moveSection(originalLine, aboveLine)
+  //       } else {
+  //         this._renderer.getEditor().moveSection(originalLine, -1)
+  //       }
 
-        // Cool, now destroy the sortable, rebuild the TOC, and re-fill the div
-        // again.
-        $('#toc-container-' + idUniquifier).sortable('destroy')
-        this._currentPopup.close()
-        this._currentPopup = null
-        this.displayTOC()
-      }
-    })
-  }
+  //       // Cool, now destroy the sortable, rebuild the TOC, and re-fill the div
+  //       // again.
+  //       $('#toc-container-' + idUniquifier).sortable('destroy')
+  //       this._currentPopup.close()
+  //       this._currentPopup = null
+  //       this.displayTOC()
+  //     }
+  //   })
+  // }
 
   displayDevClipboard () {
     // DevClipboard

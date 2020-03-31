@@ -51,13 +51,6 @@
         },
         {
             "role": "button",
-            "class": "show-toc",
-            "command": "toc",
-            "content": "{}",
-            "title": "toolbar.show_toc"
-        },
-        {
-            "role": "button",
             "class": "find",
             "command": "file-find",
             "content": "{}",

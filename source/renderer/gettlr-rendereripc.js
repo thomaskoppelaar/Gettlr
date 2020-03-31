@@ -533,9 +533,9 @@ class GettlrRendererIPC {
         global.notifyError(cnt)
         break
 
-      case 'toc':
-        this._app.getBody().displayTOC()
-        break
+      // case 'toc':
+      //   this._app.getBody().displayTOC()
+      //   break
 
       // Zoom
       case 'zoom-reset':
