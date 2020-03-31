@@ -80,6 +80,7 @@ class GettlrAttachments {
     * Refreshes the list with new attachments on dir change.
     */
   refresh () {
+    this._fileContainer.text('')
     // Grab the newest attachments and refresh
     if (!this._renderer.getCurrentDir()) {
       this._fileContainer.append($('<p>').text(trans('gui.no_attachments')))
