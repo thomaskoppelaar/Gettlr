@@ -36,7 +36,12 @@ class GettlrAttachments {
   constructor (parent) {
     this._renderer = parent
     this._container = $('<div>').prop('id', 'attachments').css('display', 'none')
-    this._container.html(`<h1>${trans('gui.attachments')} <small id="open-dir-external" title="${trans('gui.attachments_open_dir')}">&#xf332;</small></h1>`)
+
+    this._tocContainer = $('<div>').prop('id', 'tocContainer')
+    this._container.append($('<h1>').text(trans('gui.citeproc.toc_heading')))
+    this._container.append(this._tocContainer)
+
+    this._container.append(`<h1>${trans('gui.attachments')} <small id="open-dir-external" title="${trans('gui.attachments_open_dir')}">&#xf332;</small></h1>`)
     this._fileContainer = $('<div>').prop('id', 'files')
     this._container.append(this._fileContainer)
 
@@ -44,9 +49,7 @@ class GettlrAttachments {
     this._container.append($('<h1>').text(trans('gui.citeproc.references_heading')))
     this._container.append(this._bibliographyContainer)
 
-    this._tocContainer = $('<div>').prop('id', 'tocContainer')
-    this._container.append($('<h1>').text(trans('gui.citeproc.toc_heading')))
-    this._container.append(this._tocContainer)
+    
     
     $('body').append(this._container)
     this._open = false
