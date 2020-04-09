@@ -12,7 +12,7 @@
  * END HEADER
  */
 
-const GettlrCommand = require('./Gettlr-command')
+const GettlrCommand = require('./gettlr-command')
 const { trans } = require('../../common/lang/i18n')
 
 class FileNew extends GettlrCommand {

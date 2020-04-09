@@ -12,7 +12,7 @@
  * END HEADER
  */
 
-const GettlrCommand = require('./Gettlr-command')
+const GettlrCommand = require('./gettlr-command')
 const { app } = require('electron')
 const path = require('path')
 const makeExport = require('../modules/export')

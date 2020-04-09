@@ -12,7 +12,7 @@
  * END HEADER
  */
 
-const GettlrCommand = require('./Gettlr-command')
+const GettlrCommand = require('./gettlr-command')
 const path = require('path')
 const { trans } = require('../../common/lang/i18n')
 

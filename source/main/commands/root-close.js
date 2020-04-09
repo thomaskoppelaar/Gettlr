@@ -12,7 +12,7 @@
  * END HEADER
  */
 
-const GettlrCommand = require('./Gettlr-command')
+const GettlrCommand = require('./gettlr-command')
 
 class RootClose extends GettlrCommand {
   constructor (app) {

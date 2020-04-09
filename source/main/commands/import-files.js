@@ -12,9 +12,9 @@
  * END HEADER
  */
 
-const GettlrCommand = require('./Gettlr-command')
+const GettlrCommand = require('./gettlr-command')
 const { trans } = require('../../common/lang/i18n')
-const GettlrImport = require('../Gettlr-import')
+const GettlrImport = require('../gettlr-import')
 const path = require('path')
 
 class ImportFiles extends GettlrCommand {

@@ -13,14 +13,14 @@
  * END HEADER
  */
 
-const GettlrRendererIPC = require('./Gettlr-rendereripc')
-const GettlrEditor = require('./Gettlr-editor')
-const GettlrBody = require('./Gettlr-body')
-const GettlrToolbar = require('./Gettlr-toolbar')
-const GettlrAttachments = require('./Gettlr-attachments')
+const GettlrRendererIPC = require('./gettlr-rendereripc')
+const GettlrEditor = require('./gettlr-editor')
+const GettlrBody = require('./gettlr-body')
+const GettlrToolbar = require('./gettlr-toolbar')
+const GettlrAttachments = require('./gettlr-attachments')
 const GlobalSearch = require('./util/global-search')
+const GettlrStore = require('./gettlr-store')
 
-const GettlrStore = require('./Gettlr-store')
 const createSidebar = require('./assets/vue/vue-sidebar')
 
 const { remote, shell, clipboard } = require('electron')
