@@ -13,3 +13,7 @@ yarn.log
 
 # Don't commit ESLint error reports
 eslint_report.htm
+# Don't commit the npm debug log
+
+ npm-debug.log
+
