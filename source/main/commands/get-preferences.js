@@ -12,7 +12,7 @@
  * END HEADER
  */
 
-const GettlrCommand = require('./Gettlr-command')
+const GettlrCommand = require('./gettlr-command')
 const { enumDictFiles, enumLangFiles } = require('../../common/lang/i18n')
 
 class GetPreferences extends GettlrCommand {

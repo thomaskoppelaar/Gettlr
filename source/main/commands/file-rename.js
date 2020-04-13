@@ -12,7 +12,7 @@
  * END HEADER
  */
 
-const GettlrCommand = require('./Gettlr-command')
+const GettlrCommand = require('./gettlr-command')
 const ignoreFile = require('../../common/util/ignore-file')
 const sanitize = require('sanitize-filename')
 

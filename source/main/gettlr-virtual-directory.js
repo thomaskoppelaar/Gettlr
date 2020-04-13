@@ -23,7 +23,7 @@ const path = require('path')
 const hash = require('../common/util/hash')
 const sort = require('../common/util/sort')
 
-const GettlrAlias = require('./Gettlr-alias')
+const GettlrAlias = require('./gettlr-alias')
 
 const ALLOW_SORTS = [ 'name-up', 'name-down', 'time-up', 'time-down' ]
 

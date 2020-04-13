@@ -25,7 +25,7 @@ const { app } = require('electron')
 const process = require('process')
 
 // Include the global Gettlr class
-const gettlr = require('./main/Gettlr.js')
+const gettlr = require('./main/gettlr.js')
 
 // Helpers to determine what files from argv we can open
 const isFile = require('./common/util/is-file')

@@ -13,8 +13,8 @@
  */
 
 const fs = require('fs')
-const GettlrCommand = require('./Gettlr-command')
-const GettlrDirectory = require('../Gettlr-dir')
+const GettlrCommand = require('./gettlr-command')
+const GettlrDirectory = require('../gettlr-dir')
 const { trans } = require('../../common/lang/i18n')
 
 class DirRescan extends GettlrCommand {

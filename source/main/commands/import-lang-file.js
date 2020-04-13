@@ -12,7 +12,7 @@
  * END HEADER
  */
 
-const GettlrCommand = require('./Gettlr-command')
+const GettlrCommand = require('./gettlr-command')
 const path = require('path')
 const fs = require('fs')
 const bcp47 = require('bcp-47')

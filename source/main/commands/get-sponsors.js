@@ -12,7 +12,7 @@
  * END HEADER
  */
 
-const GettlrCommand = require('./Gettlr-command')
+const GettlrCommand = require('./gettlr-command')
 const got = require('got')
 const REPO_URL = require('../../common/data.json').sponsors_url
 
