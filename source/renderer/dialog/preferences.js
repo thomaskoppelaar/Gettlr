@@ -228,7 +228,7 @@ class PreferencesDialog extends GettlrDialog {
     let cfg = {}
 
     // Standard preferences
-    cfg['darkTheme'] = (data.find(elem => elem.name === 'darkTheme') !== true)
+    // cfg['darkTheme'] = (data.find(elem => elem.name === 'darkTheme') !== undefined)
     cfg['fileMeta'] = (data.find(elem => elem.name === 'fileMeta') !== undefined)
     cfg['hideDirs'] = (data.find(elem => elem.name === 'hideDirs') !== undefined)
     cfg['alwaysReloadFiles'] = (data.find(elem => elem.name === 'alwaysReloadFiles') !== undefined)
