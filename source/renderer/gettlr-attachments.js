@@ -7,7 +7,7 @@
  * CVM-Role:        View
  * Maintainer:      Hendrik Erz
  * License:         GNU GPL v3
- *
+ * 
  * Description:     Displays the attachments of the current directory.
  *
  * END HEADER
