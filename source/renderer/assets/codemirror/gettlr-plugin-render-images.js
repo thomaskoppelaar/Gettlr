@@ -128,7 +128,7 @@
       img.style.maxHeight = height
       img.style.cursor = 'default' // Nicer cursor
       img.src = url + `?${new Date().getTime()}` // Add a "cachebreaker", thanks to https://stackoverflow.com/a/1077051
-      img.onclick = (e) => { textMarker.clear() }
+      imgSpan.ondblclick = (e) => { textMarker.clear() }
 
       // Update the image caption on load to retrieve the real image size.
       img.onload = () => {
@@ -142,3 +142,4 @@
     }
   }
 })
+qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq
