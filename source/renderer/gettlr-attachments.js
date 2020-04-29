@@ -44,13 +44,7 @@ class GettlrAttachments {
     this._container.append(`<h1>${trans('gui.attachments')} <small id="open-dir-external" title="${trans('gui.attachments_open_dir')}">&#xf332;</small></h1>`)
     this._fileContainer = $('<div>').prop('id', 'files')
     this._container.append(this._fileContainer)
-
-    this._bibliographyContainer = $('<div>').prop('id', 'bibliography')
-    this._container.append($('<h1>').text(trans('gui.citeproc.references_heading')))
-    this._container.append(this._bibliographyContainer)
-
-    
-    
+        
     $('body').append(this._container)
     this._open = false
     this._attachments = []
@@ -203,15 +197,6 @@ class GettlrAttachments {
     })
   }
 
-  /**
-   * This function refreshes the bibliography settings.
-   * @param  {Mixed} bib Either an array as returned from citeproc, or a string.
-   * @return {void}     This does not return.
-   */
-  refreshBibliography (bib) {
-    if (typeof bib === 'string') this._bibliographyContainer.html(`<p>${bib}</p>`)
-    else this._bibliographyContainer.html(bib[0].bibstart + bib[1].join('\n') + bib[0].bibend)
-  }
 
   /**
    * Overwrites the text buffer of a DragEvent to modify what is being dragged.

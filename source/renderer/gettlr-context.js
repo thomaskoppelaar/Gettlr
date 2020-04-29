@@ -143,13 +143,6 @@ class GettlrCon {
       selection.addRange(range)
     }
 
-    // Don't select the word under cursor if we've right-clicked a citation
-    if (elem.hasClass('citeproc-citation')) {
-      shouldSelectWordUnderCursor = false
-      // Also, remove the selected part of the citation
-      let selection = window.getSelection()
-      selection.removeAllRanges()
-    }
 
     // First: determine where the click happened (Sidebar or editor)
     if (elem.parents('#sidebar').length > 0) {

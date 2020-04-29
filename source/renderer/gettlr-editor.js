@@ -77,11 +77,9 @@ class GettlrEditor {
     // The starting position for a tag autocomplete.
     this._autoCompleteStart = null
     this._tagDB = [] // Holds all available tags for autocomplete
-    this._citeprocIDs = [] // Holds all available IDs for autocomplete
     this._currentDatabase = null // Points either to the tagDB or the ID database
 
     // What elements should be rendered?
-    this._renderCitations = false
     this._renderIframes = false
     this._renderImages = false
     this._renderLinks = false
@@ -111,12 +109,6 @@ class GettlrEditor {
       hr: '---'
     })
     this._turndown.use(turndownGfm.gfm)
-
-    // The last array of IDs as fetched from the document
-    this._lastKnownCitationCluster = []
-
-    // All individual citations fetched during this session.
-    this._citationBuffer = Object.create(null)
 
     // Should the editor mute lines while in distraction-free mode?
     this._mute = true
@@ -158,7 +150,6 @@ class GettlrEditor {
             // the process and add the file link according to the user's
             // preference settings.
             if (this._currentDatabase !== this._tagDB &&
-              this._currentDatabase !== this._citeprocIDs &&
               completion.displayText) {
               // Get the correct setting
               let linkPref = global.config.get('zkn.linkWithFilename')
@@ -279,11 +270,6 @@ class GettlrEditor {
           this._currentDatabase = this._tagDB
           this._cm.showHint()
         }
-      } else if (newText[0] === '@') {
-        // citeproc-ID autocompletion
-        this._autoCompleteStart = JSON.parse(JSON.stringify(cm.getCursor()))
-        this._currentDatabase = this._citeprocIDs
-        this._cm.showHint()
       } else if (textUntilCursor === linkStart && this._renderer.getCurrentDir() != null) {
         // File name autocompletion
         this._autoCompleteStart = JSON.parse(JSON.stringify(cur))
@@ -352,7 +338,6 @@ class GettlrEditor {
         // programatically changed -> no need to flag any modification!
         // Clear the timeouts in any case
         if (this._timeout) clearTimeout(this._timeout)
-        if (this._citationTimeout) clearTimeout(this._citationTimeout)
 
         // Check if the change actually modified the
         // doc or not
@@ -363,14 +348,8 @@ class GettlrEditor {
           // Set the autosave timeout
           this._timeout = setTimeout((e) => {
             this._renderer.saveFile()
-            this.updateCitations()
           }, SAVE_TIMOUT)
         }
-
-        // Always run an update-citations command each time there have been changes
-        this._citationTimeout = setTimeout((e) => {
-          this.updateCitations()
-        }, 500)
       }
 
       if(this._renderer._attachments._open) this._renderer._attachments.displayTOC()
@@ -388,7 +367,6 @@ class GettlrEditor {
       if (this._renderIframes) this._cm.execCommand('markdownRenderIframes') // Render iFrames
       if (this._renderMath) this._cm.execCommand('markdownRenderMath') // Render equations
       if (this._renderLinks) this._cm.execCommand('markdownRenderLinks') // Render links
-      if (this._renderCitations) this._cm.execCommand('markdownRenderCitations') // Render citations
       if (this._renderTables) this._cm.execCommand('markdownRenderTables') // Render tables
       if (this._renderTasks) this._cm.execCommand('markdownRenderTasks') // Render tasks
       if (this._renderHTags) this._cm.execCommand('markdownRenderHTags') // Render heading levels
@@ -398,9 +376,6 @@ class GettlrEditor {
         this._muteLines()
       }
 
-      // Additionally, render all citations that may have been newly added to
-      // the DOM by CodeMirror.
-      this.renderCitations()
 
       // Update fileInfo
       this._renderer.updateFileInfo(this.getFileInfo())
@@ -409,7 +384,6 @@ class GettlrEditor {
     // We need to update citations also on updates, as this is the moment when
     // new spans get added to the DOM which we might have to render.
     this._cm.on('update', (cm) => {
-      this.renderCitations()
       // Must be called to ensure all tables have active event listeners.
       if (this._renderTables) this._cm.execCommand('markdownInitiateTables')
     })
@@ -550,8 +524,6 @@ class GettlrEditor {
     // If we've got a new file, we need to re-focus the editor
     if (flag === 'new-file') this._cm.focus()
 
-    // Finally, set a timeout for a first run of citation rendering
-    setTimeout(() => { this.updateCitations() }, 1000)
 
     return this
   }
@@ -639,8 +611,6 @@ class GettlrEditor {
     this._cm.setOption('markdownBoldFormatting', global.config.get('editor.boldFormatting'))
     this._cm.setOption('markdownItalicFormatting', global.config.get('editor.italicFormatting'))
 
-    // Set the preview options
-    this._renderCitations = global.config.get('display.renderCitations')
     this._renderIframes = global.config.get('display.renderIframes')
     this._renderImages = global.config.get('display.renderImages')
     this._renderLinks = global.config.get('display.renderLinks')
@@ -679,20 +649,6 @@ class GettlrEditor {
    * @param {Object} tagDB An object (here with prototype due to JSON) containing tags
    */
   setTagDatabase (tagDB) { this._tagDB = tagDB }
-
-  /**
-   * Sets the citeprocIDs available to autocomplete to a new list
-   * @param {Array} idList An array containing the new IDs
-   */
-  setCiteprocIDs (idList) {
-    if (typeof idList !== 'object' || idList === null) {
-      // Create an empty object.
-      this._citeprocIDs = Object.create(null)
-    } else {
-      // Overwrite existing array
-      this._citeprocIDs = idList
-    }
-  }
 
   /**
     * Removes the mute-class from all lines
@@ -1010,108 +966,6 @@ class GettlrEditor {
     if (plain && plain.length > 0) this.insertText(plain)
 
     return this
-  }
-
-  /**
-   * Renders all citations that haven't been rendered yet.
-   * @return {void} Does not return.
-   */
-  renderCitations () {
-    let needRefresh = false
-    let elements = $('.CodeMirror .citeproc-citation')
-    elements.each((index, elem) => {
-      elem = $(elem)
-      if (elem.attr('data-rendered') !== 'yes') {
-        let item = elem.text()
-        let id = hash(item)
-        if (this._citationBuffer[id] !== undefined) {
-          elem.html(this._citationBuffer[id]).removeClass('error').attr('data-rendered', 'yes')
-          needRefresh = true
-        } else {
-          let newCite = global.citeproc.getCitation(item)
-          switch (newCite.status) {
-            case 4: // Engine was ready, newCite.citation contains the citation
-              elem.html(newCite.citation).removeClass('error').attr('data-rendered', 'yes')
-              this._citationBuffer[id] = newCite.citation
-              needRefresh = true
-              break
-            case 3: // There was an error loading the database
-              elem.addClass('error')
-              break
-            case 2: // There was no database, so don't do anything.
-              elem.attr('data-rendered', 'yes')
-              break
-          }
-        }
-      }
-    })
-
-    // We need to refresh the editor, because the updating process has certainly
-    // altered the widths of the spans.
-    if (needRefresh) this._cm.refresh()
-  }
-
-  /**
-   * This method updates both the in-text citations as well as the bibliography.
-   * @return {void} Does not return.
-   */
-  updateCitations () {
-    // This function searches for all elements with class .citeproc-citation and
-    // updates the contents of these elements based upon the ID.
-
-    // NEVER use jQuery to always query all citeproc-citations, because CodeMirror
-    // does NOT always print them! We have to manually go through the value of
-    // the code ...
-    let cnt = this._cm.getValue()
-    let totalIDs = Object.create(null)
-    let match
-    let citeprocIDRE = /@([a-z0-9_:.#$%&\-+?<>~/]+)/gi
-    let somethingUpdated = false // This flag indicates if anything has changed and justifies a new bibliography.
-    while ((match = citeprocIDRE.exec(cnt)) != null) {
-      let id = match[1]
-      totalIDs[id] = this._lastKnownCitationCluster[id] // Could be undefined.
-    }
-
-    // Now we have the correct amount of IDs in our cluster. Now fetch all
-    // citations of new ones.
-    for (let id in totalIDs) {
-      if (totalIDs[id] === undefined) {
-        totalIDs[id] = true
-        somethingUpdated = true // We have to fetch a new citation
-      }
-    }
-
-    // Check if there are some citations _missing_ from the new array
-    for (let id in this._lastKnownCitationCluster) {
-      if (totalIDs[id] === undefined) {
-        somethingUpdated = true // We only need one entry to justify an update
-        break
-      }
-    }
-
-    // Swap
-    this._lastKnownCitationCluster = totalIDs
-
-    if (Object.keys(this._lastKnownCitationCluster).length === 0) {
-      return this._renderer.setBibliography(trans('gui.citeproc.references_none'))
-    }
-
-    if (somethingUpdated) {
-      // Need to update
-      // We need to update the items first!
-      let bib = global.citeproc.updateItems(Object.keys(this._lastKnownCitationCluster))
-      if (bib === true) {
-        global.citeproc.makeBibliography() // Trigger a new bibliography build
-      } else if (bib === 1) { // 1 means booting
-        this._renderer.setBibliography(trans('gui.citeproc.references_booting'))
-        // Unset so that the update process is triggered again next time
-        this._lastKnownCitationCluster = Object.create(null)
-      } else if (bib === 3) { // There was an error
-        this._renderer.setBibliography(trans('gui.citeproc.references_error'))
-      } else if (bib === 2) { // No database loaded
-        this._renderer.setBibliography(trans('gui.citeproc.no_db'))
-      }
-    }
   }
 
   /**

@@ -143,7 +143,7 @@ class PreferencesDialog extends GettlrDialog {
 
     // Reset the pandoc command
     $('#reset-pandoc-command').on('click', (e) => {
-      $('#pandocCommand').val('pandoc "$infile$" -f markdown $outflag$ $tpl$ $toc$ $tocdepth$ $citeproc$ $standalone$ --pdf-engine=xelatex --mathjax -o "$outfile$"')
+      $('#pandocCommand').val('pandoc "$infile$" -f markdown $outflag$ $tpl$ $toc$ $tocdepth$ $standalone$ --pdf-engine=xelatex --mathjax -o "$outfile$"')
     })
 
     $('#generate-id').on('click', (e) => {
@@ -241,7 +241,6 @@ class PreferencesDialog extends GettlrDialog {
     cfg['newFileDontPrompt'] = (data.find(elem => elem.name === 'newFileDontPrompt') !== undefined)
 
     // Display checkboxes
-    cfg['display.renderCitations'] = (data.find(elem => elem.name === 'display.renderCitations') !== undefined)
     cfg['display.renderIframes'] = (data.find(elem => elem.name === 'display.renderIframes') !== undefined)
     cfg['display.renderImages'] = (data.find(elem => elem.name === 'display.renderImages') !== undefined)
     cfg['display.renderLinks'] = (data.find(elem => elem.name === 'display.renderLinks') !== undefined)

@@ -54,16 +54,6 @@
             <option value="{{this}}" {{#ifCond this '=' ../format}}selected="selected"{{/ifCond}}>{{this}}</option>
             {{/each}}
           </select>
-          <hr>
-          <label for="cslStyle">{{i18n "dialog.preferences.project.csl_style"}}</label>
-          <div class="file-select-group">
-            <input type="text" name="cslStyle" id="cslStyle" value="{{cslStyle}}">
-            <button type="button" class="request-file"
-              data-tippy-content="{{i18n "dialog.preferences.choose_file"}}"
-              data-request-name="Citation Style Language File"
-              data-request-ext="csl"
-              data-request-target="#cslStyle"></button>
-          </div>
           <div class="clearfix"></div>
         </div>
       </div>

@@ -206,7 +206,6 @@ class Gettlr {
       'config': require('./providers/config-provider'),
       'appearance': require('./providers/appearance-provider'),
       'watchdog': require('./providers/watchdog-provider'),
-      'citeproc': require('./providers/citeproc-provider'),
       'dictionary': require('./providers/dictionary-provider'),
       'recentDocs': require('./providers/recent-docs-provider'),
       'tags': require('./providers/tag-provider'),

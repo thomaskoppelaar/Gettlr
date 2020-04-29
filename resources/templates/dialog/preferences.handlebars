@@ -269,24 +269,6 @@
             <label for="pref-export-cwd">{{i18n "dialog.preferences.export.dest_cwd_label"}}</label>
           </div>
           <hr>
-          <label for="cslLibrary">{{i18n "dialog.preferences.citation_database"}}</label>
-          <div class="file-select-group">
-            <input type="text" name="export.cslLibrary" id="cslLibrary" value="{{export.cslLibrary}}">
-            <button type="button" class="request-file"
-            data-tippy-content="{{i18n "dialog.preferences.choose_file"}}"
-            data-request-name="CSL JSON or BibTex"
-            data-request-ext="json,bib"
-            data-request-target="#cslLibrary"></button>
-          </div>
-          <label for="cslStyle">{{i18n "dialog.preferences.project.csl_style"}}</label>
-          <div class="file-select-group">
-            <input type="text" name="export.cslStyle" id="cslStyle" value="{{export.cslStyle}}">
-            <button type="button" class="request-file"
-            data-tippy-content="{{i18n "dialog.preferences.choose_file"}}"
-            data-request-name="Citation Style Language File"
-            data-request-ext="csl"
-            data-request-target="#cslStyle"></button>
-          </div>
         </div>
       </div>
 
@@ -388,13 +370,6 @@
         </div>
         <div class="box-right">
           <p>{{i18n "dialog.preferences.display.preview_info"}}</p>
-          <div class="cb-group">
-            <label class="cb-toggle">
-              <input type="checkbox" name="display.renderCitations" value="yes" id="display.renderCitations" {{#if display.renderCitations}}checked="checked"{{/if}}>
-              <div class="toggle"></div>
-            </label>
-            <label for="display.renderCitations">{{i18n "dialog.preferences.display.render_citations"}}</label>
-          </div>
           <div class="cb-group">
             <label class="cb-toggle">
               <input type="checkbox" name="display.renderIframes" value="yes" id="display.renderIframes" {{#if display.renderIframes}}checked="checked"{{/if}}>
@@ -752,10 +727,10 @@
             {{i18n "dialog.preferences.pandoc_command"}}
           </label>
           <div class="form-inline-buttons">
-            <input type="text" id="pandocCommand" name="pandocCommand" placeholder="pandoc &quot;$infile$&quot; -f markdown $outflag$ $tpl$ $toc$ $tocdepth$ $citeproc$ $standalone$ --pdf-engine=xelatex --mathjax -o &quot;$outfile$&quot;" value="{{ pandocCommand }}">
+            <input type="text" id="pandocCommand" name="pandocCommand" placeholder="pandoc &quot;$infile$&quot; -f markdown $outflag$ $tpl$ $toc$ $tocdepth$ $standalone$ --pdf-engine=xelatex --mathjax -o &quot;$outfile$&quot;" value="{{ pandocCommand }}">
             <button type="button" id="reset-pandoc-command" data-tippy-content="{{i18n "dialog.preferences.reset_pandoc_command"}}">&#9003;</button>
           </div>
-          <span class="info">Variables: $citeproc$, $format$, $infile$, $indir$, $outfile$, $outflag$, $standalone$, $toc$, $tocdepth$, $tpl$</span>
+          <span class="info">Variables: $format$, $infile$, $indir$, $outfile$, $outflag$, $standalone$, $toc$, $tocdepth$, $tpl$</span>
         </div>
       </div>
     </div>

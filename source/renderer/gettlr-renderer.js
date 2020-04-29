@@ -111,9 +111,6 @@ class GettlrRenderer {
       // Request a first batch of files
       this._ipc.send('get-paths')
 
-      // Send an initial request to the reference database.
-      this._ipc.send('citeproc-get-ids')
-
       
     }, 100)
 
@@ -686,20 +683,6 @@ class GettlrRenderer {
 
     return arr
   }
-
-  /**
-   * Updates the list of IDs available for autocomplete
-   * @param {Array} idList An array containing all available IDs.
-   */
-  setCiteprocIDs (idList) { this._editor.setCiteprocIDs(idList) }
-
-  /**
-   * Gets called whenever a new bibliography comes from main, and we need to
-   * update it here.
-   * @param {Object} bib A new citeproc bibliography object.
-   */
-  setBibliography (bib) { this._attachments.refreshBibliography(bib) }
-
   /**
    * Simply indicates to main to set the modified flag.
    */

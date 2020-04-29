@@ -114,14 +114,12 @@ class ConfigProvider extends EventEmitter {
       'pandoc': 'pandoc',
       'xelatex': 'xelatex',
       // The pandoc command to be run on export
-      'pandocCommand': 'pandoc "$infile$" -f markdown $outflag$ $tpl$ $toc$ $tocdepth$ $citeproc$ $standalone$ --pdf-engine=xelatex --mathjax -o "$outfile$"',
+      'pandocCommand': 'pandoc "$infile$" -f markdown $outflag$ $tpl$ $toc$ $tocdepth$ $standalone$ --pdf-engine=xelatex --mathjax -o "$outfile$"',
       'export': {
         'dir': 'temp', // Can either be "temp" or "cwd" (current working directory)
         'stripIDs': false, // Strip ZKN IDs such as @ID:<id>
         'stripTags': false, // Strip tags a.k.a. #tag
         'stripLinks': 'full', // Strip internal links: "full" - remove completely, "unlink" - only remove brackets, "no" - don't alter
-        'cslLibrary': '', // Path to a CSL JSON library file
-        'cslStyle': '' // Path to a CSL Style file
       },
       // PDF options (for all documents; projects will copy this object over)
       'pdf': {
@@ -223,8 +221,7 @@ class ConfigProvider extends EventEmitter {
       'display': {
         'theme': 'berlin', // The theme used by the app, can be berlin, frankfurt, bielefeld, karl-marx-stadt
         'imageWidth': 100, // Maximum preview image width
-        'imageHeight': 50, // Maximum preview image height
-        'renderCitations': true,
+        'imageHeight': 50,
         'renderIframes': true,
         'renderImages': true,
         'renderLinks': true,

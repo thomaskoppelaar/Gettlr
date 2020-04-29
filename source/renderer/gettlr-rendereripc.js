@@ -120,24 +120,6 @@ class GettlrRendererIPC {
       }
     }
 
-    // Sends an array of IDs to main. If they are found in the JSON, cool! Otherwise
-    // this will return false.
-    global.citeproc = {
-      getCitation: (citation) => {
-        return ipc.sendSync('cite', {
-          'type': 'get-citation',
-          'content': citation
-        })
-      },
-      updateItems: (keyList) => {
-        return ipc.sendSync('cite', {
-          'type': 'update-items',
-          'content': keyList
-        })
-      },
-      makeBibliography: () => { ipc.send('cite', { 'type': 'make-bibliography' }) }
-    }
-
     global.ipc = {
       /**
        * Sends a message and and saves the callback.
@@ -467,7 +449,6 @@ class GettlrRendererIPC {
         break
 
       case 'open-tags-preferences':
-        console.log("renderer-ipc - open-tags-preferences")
         this.send('get-tags-preferences')
         break
 
@@ -593,16 +574,6 @@ class GettlrRendererIPC {
       // Paste the current clipboard selection as plain text
       case 'paste-as-plain':
         this._app.getEditor().pasteAsPlain()
-        break
-
-      // Return to the app a fresh list of IDs available.
-      case 'citeproc-ids':
-        this._app.setCiteprocIDs(cnt.ids)
-        break
-
-      // The argument contains a new bibliography object
-      case 'citeproc-bibliography':
-        this._app.setBibliography(cnt)
         break
 
       case 'copy-to-clipboard':

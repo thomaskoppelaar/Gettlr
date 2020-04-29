@@ -47,23 +47,12 @@ module.exports = async function (options) {
     throw new Error(trans('system.error.no_xelatex_message'), trans('system.error.no_xelatex_title'))
   }
 
-  // Also check if we can have pandoc-citeproc run over the file
-  let citeproc = ''
-  if (isFile(global.config.get('export.cslLibrary'))) {
-    citeproc += `--filter pandoc-citeproc --bibliography "${global.config.get('export.cslLibrary')}"`
-  }
-
-  if (options.hasOwnProperty('cslStyle') && isFile(options.cslStyle)) {
-    citeproc += ` --csl "${options.cslStyle}"`
-  }
-
   // Pandoc flags to be passed to the compiler
   let pandocFlags = {
     'tpl': (options.template) ? `--template="${options.template}"` : '',
     'infile': options.sourceFile,
     'toc': (options.pdf.toc && options.format === 'pdf') ? '--toc' : '',
     'tocdepth': (options.pdf.tocDepth) ? '--toc-depth=' + options.pdf.tocDepth : '',
-    'citeproc': citeproc,
     'outfile': options.targetFile,
     'outflag': '-t ' + ((options.format === 'pdf') ? 'latex' : options.format),
     'format': options.format,

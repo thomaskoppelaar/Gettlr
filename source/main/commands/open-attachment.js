@@ -37,19 +37,6 @@ class OpenAttachment extends GettlrCommand {
 
     let appearsToHaveNoAttachments = false
 
-    // First let's see if we've got BibTex attachments, so we can
-    // circumvent the Zotero thing directly
-    if (global.citeproc.hasBibTexAttachments()) {
-      let attachments = global.citeproc.getBibTexAttachments(arg.citekey)
-      if (attachments && attachments.length === 0) {
-        appearsToHaveNoAttachments = true
-      } else if (attachments) {
-        return shell.openItem(attachments[0])
-      } else {
-        // Try Zotero, but indicate that there might not be attachments
-        appearsToHaveNoAttachments = true
-      }
-    }
 
     // Thanks to @retorquere, we can query the better bibtex JSON RPC
     // api to retrieve a full list of all attachments.
