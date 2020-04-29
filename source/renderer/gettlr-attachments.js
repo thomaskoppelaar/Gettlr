@@ -63,9 +63,9 @@ class GettlrAttachments {
       this._tocContainer.text('')
       this.displayTOC()
       this._container.css('display', '')
-      this._container.animate({ 'right': '0%' })
+      this._container.animate({ 'right': '0%' }, 10)
     } else {
-      this._container.animate({ 'right': '-20%' }, () => {
+      this._container.animate({ 'right': '-20%' }, 10, () => {
         this._container.css('display', 'none')
       })
     }
