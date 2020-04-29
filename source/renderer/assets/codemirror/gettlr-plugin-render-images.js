@@ -77,16 +77,19 @@
 
       // Retrieve lineInfo for line number
       let lineInfo = cm.lineInfo(i)
-      let img = new Image()
+      let img = document.createElement('img')
+
+      let imgSpan = document.createElement('span')
+      imgSpan.insertAdjacentElement("beforeend", img)
       // Now add a line widget to this line.
       let textMarker = cm.markText(
         { 'line': lineInfo.line, 'ch': 0 },
         { 'line': lineInfo.line, 'ch': line.length },
         {
           'clearOnEnter': true,
-          'replacedWith': img,
+          'replacedWith': imgSpan,
           'handleMouseEvents': true
-        }
+        } 
       )
 
       // Display a replacement image in case the correct one is not found
@@ -130,6 +133,7 @@
       // Update the image caption on load to retrieve the real image size.
       img.onload = () => {
         img.title = `${caption} (${img.naturalWidth}x${img.naturalHeight}px)`
+        imgSpan.insertAdjacentHTML("beforeend", "<em style=\"float:right\" class=\"cm-comment\">"+img.title+"</em>")
         textMarker.changed()
       }
 
