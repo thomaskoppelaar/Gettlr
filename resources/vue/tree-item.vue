@@ -34,7 +34,7 @@
     >
       <p class="filename" v-bind:data-hash="obj.hash">
         <span v-show="hasChildren" v-on:click.stop="toggleCollapse" v-bind:class="indicatorClass"></span>
-        {{ obj.name }}<span v-if="hasDuplicateName" class="dir">&nbsp;({{ dirname }})</span>
+        {{ basename }}<span v-if="hasDuplicateName" class="dir">&nbsp;({{ dirname }})</span>
       </p>
       <Sorter v-if="isDirectory && combined" v-show="hover" v-bind:sorting="obj.sorting"></Sorter>
     </div>
@@ -165,6 +165,18 @@ module.exports = {
         if (elem.length > 1) return true
       }
       return false
+    },
+
+    /**
+     * Copied over from file-item.vue: Used for looking for a frontmatter title property,
+     * and uses that as a filename if it is set.
+     */
+    basename: function () {
+        if (this.obj.frontmatter && this.obj.frontmatter.hasOwnProperty('title')) {
+          return this.obj.frontmatter.title
+        } else {
+          return this.obj.name
+        }
     },
     /**
      * returns true, if this is the current selected directory, there
