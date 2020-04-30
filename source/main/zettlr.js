@@ -21,7 +21,6 @@ const path = require('path')
 const ZettlrIPC = require('./zettlr-ipc.js')
 const ZettlrWindow = require('./zettlr-window.js')
 const ZettlrQLStandalone = require('./zettlr-ql-standalone.js')
-const ZettlrTargets = require('./zettlr-targets.js')
 const ZettlrStats = require('./zettlr-stats.js')
 const FSAL = require('./modules/fsal')
 const { loadI18nMain, trans } = require('../common/lang/i18n')
@@ -29,7 +28,7 @@ const ignoreDir = require('../common/util/ignore-dir')
 const ignoreFile = require('../common/util/ignore-file')
 const isDir = require('../common/util/is-dir')
 const isFile = require('../common/util/is-file')
-
+const FILETYPES = require('../common/data.json').filetypes
 const loadCommands = require('./commands/_autoload')
 
 /**
@@ -49,7 +48,7 @@ class Zettlr {
     this.isBooting = true // Only is true until the main process has fully loaded
     // INTERNAL VARIABLES
     this.currentFile = null // Currently opened file (object)
-    this.currentDir = null // Current working directory (object)
+    // this.currentDir = null // Current working directory (object)
     this.editFlag = false // Is the current opened file edited?
     this._openPaths = [] // Holds all currently opened paths.
     this._providers = {} // Holds all app providers (as properties of this object)
@@ -63,27 +62,19 @@ class Zettlr {
       global.log.error(e.message, e)
     })
 
-    // First thing that has to be done is to load the service providers
-    this._bootServiceProviders()
-
-    // Init translations
-    let metadata = loadI18nMain(global.config.get('appLang'))
-
-    // It may be that only a fallback has been provided or else. In this case we
-    // must update the config to reflect this.
-    if (metadata.tag !== global.config.get('appLang')) global.config.set('appLang', metadata.tag)
-
-    // Boot up the IPC.
-    this.ipc = new ZettlrIPC(this)
-
     // Inject some globals
     global.application = {
       // Flag indicating whether or not the application is booting
       isBooting: () => { return this.isBooting },
+      // TODO: Match the signatures of fileUpdate and dirUpdate
       fileUpdate: (oldHash, fileMetadata) => {
+        if (typeof fileMetadata === 'number') {
+          // NOTE: This will become permanent later on
+          fileMetadata = this._fsal.findFile(fileMetadata)
+        }
         this.ipc.send('file-replace', {
           'hash': oldHash,
-          'file': fileMetadata
+          'file': this._fsal.getMetadataFor(fileMetadata)
         })
       },
       dirUpdate: (oldHash, newHash) => {
@@ -100,36 +91,69 @@ class Zettlr {
       findFile: (prop) => { return this._fsal.findFile(prop) },
       findDir: (prop) => { return this._fsal.findDir(prop) },
       // Same as findFile, only with content
-      getFile: (prop) => { return this._fsal.getFile(prop) }
+      getFile: (prop) => { return this._fsal.getFileContents(prop) }
     }
 
-    // File System Abstraction Layer, pass the folder
-    // where it can store its internal files.
-    this._fsal = new FSAL(app.getPath('userData'))
+    // First thing that has to be done is to load the service providers
+    this._bootServiceProviders()
 
-    // Listen to changes in the file system
-    this._fsal.on('fsal-state-changed', (objPath) => {
-      console.log(`FSAL state changed: ${objPath}`)
-      // Emitted when anything in the state changes
-      switch (objPath) {
-        // The root filetree has changed (added or removed root)
-        case 'filetree':
-          if (!this.isBooting) global.application.notifyChange('Roots have changed!')
-          break
-      }
-    })
+    // Init translations
+    let metadata = loadI18nMain(global.config.get('appLang'))
+
+    // It may be that only a fallback has been provided or else. In this case we
+    // must update the config to reflect this.
+    if (metadata.tag !== global.config.get('appLang')) global.config.set('appLang', metadata.tag)
+
+    // Boot up the IPC.
+    this.ipc = new ZettlrIPC(this)
 
     // Statistics
     this.stats = new ZettlrStats(this)
-
-    // Instantiate the writing targets
-    this._targets = new ZettlrTargets(this)
 
     // Load in the Quicklook window handler class
     this._ql = new ZettlrQLStandalone()
 
     // And the window.
     this.window = new ZettlrWindow(this)
+
+    // File System Abstraction Layer, pass the folder
+    // where it can store its internal files.
+    this._fsal = new FSAL(app.getPath('userData'))
+
+    // Listen to changes in the file system
+    this._fsal.on('fsal-state-changed', (objPath, info) => {
+      // Emitted when anything in the state changes
+      console.log(`FSAL state changed: ${objPath}`)
+      if (this.isBooting) return // Only propagate these results when not booting
+      switch (objPath) {
+        // The root filetree has changed (added or removed root)
+        case 'filetree':
+          // Nothing specific, so send the full payload
+          console.log('Sending full directory tree')
+          global.ipc.send('paths-update', this._fsal.getTreeMeta())
+          break
+        case 'directory':
+          // Only a directory has changed
+          console.log('Sending small directory update')
+          global.application.dirUpdate(info.oldHash, info.newHash)
+          break
+        case 'file':
+          // Only a file has changed
+          console.log('Sending small file update')
+          global.application.fileUpdate(info.oldHash, info.newHash)
+          break
+        case 'openDirectory':
+          console.log('+++++ SENDING NEW DIRECTORY TO RENDERER +++++')
+          this.ipc.send('dir-set-current', (this.getCurrentDir()) ? this.getCurrentDir().hash : null)
+          global.config.set('lastDir', (this.getCurrentDir()) ? this.getCurrentDir().hash : null)
+          break
+        case 'openFiles':
+          console.log('+++++ SYNCING OPEN FILES WITH RENDERER +++++')
+          this.ipc.send('sync-files', this._fsal.getOpenFiles())
+          global.config.set('openFiles', this._fsal.getOpenFiles())
+          break
+      }
+    })
 
     process.nextTick(() => {
       let start = Date.now()
@@ -140,11 +164,14 @@ class Zettlr {
           // Reset the global so that no old paths are re-added
           global.filesToOpen = []
           // Verify the integrity of the targets after all paths have been loaded
-          this._targets.verify()
+          global.targets.verify()
           this.isBooting = false // Now we're done booting
           let duration = Date.now() - start
           duration /= 1000 // Convert to seconds
           global.log.info(`Loaded all roots in ${duration} seconds`)
+
+          // Also, we need to (re)open all files in tabs
+          this._fsal.setOpenFiles(global.config.get('openFiles'))
 
           // Now after all paths have been loaded, we are ready to load the
           // main window to get this party started!
@@ -177,6 +204,7 @@ class Zettlr {
       'dictionary': require('./providers/dictionary-provider'),
       'recentDocs': require('./providers/recent-docs-provider'),
       'tags': require('./providers/tag-provider'),
+      'targets': require('./providers/target-provider'),
       'css': require('./providers/css-provider'),
       'translations': require('./providers/translation-provider')
     }
@@ -250,7 +278,7 @@ class Zettlr {
     }
   }
 
-  runCommand (evt, arg) {
+  async runCommand (evt, arg) {
     // This function will be called from IPC with a command and an arg.
     // First find the command
     let cmd = this._commands.find(elem => elem.respondsTo(evt))
@@ -316,6 +344,7 @@ class Zettlr {
     global.ipc.notify(trans('system.open_root_directory', path.basename(ret)))
     await this.handleAddRoots([ret])
     global.ipc.notify(trans('system.open_root_directory_success', path.basename(ret)))
+    global.ipc.send('paths-update', this._fsal.getTreeMeta())
   }
 
   /**
@@ -402,21 +431,38 @@ class Zettlr {
   /**
     * Either returns one file that matches its ID with the given term or null
     * @param  {String} term The ID to be searched for
-    * @return {OBject}      The exact match, or null.
+    * @return {Object}      The exact match, or null.
     */
-  findExact (term) { return this._fsal.findExact(term) }
+  findExact (term) {
+    // First try the ID
+    let file = this._fsal.findExact(term, 'id')
+    // No luck? Then try the name property
+    if (!file) {
+      file = this._fsal.findExact(term, 'name')
+      let ext = path.extname(term)
+      if (ext.length > 1) {
+        // file ending given
+        file = this._fsal.findExact(term, 'name')
+      } else {
+        // No file ending given, so let's test all allowed
+        for (let type of FILETYPES) {
+          file = this._fsal.findExact(term + type, 'name')
+          if (file) break
+        }
+      }
+    }
+
+    // If any of this has worked,
+    if (file != null) this.openFile(file.hash)
+  }
 
   /**
     * Sets the current file to the given file.
-    * @param {ZettlrFile} f A ZettlrFile object.
+    * @param {number} f A file hash
     */
   setCurrentFile (f) {
     this.currentFile = f
-    this.ipc.send('file-set-current', (f) ? f.hash : null)
-    global.config.set('lastFile', (f) ? f.hash : null)
-
-    // Always adapt the window title
-    if (this.window) this.window.fileUpdate()
+    global.config.set('lastFile', (f && f.hasOwnProperty('hash')) ? f.hash : f)
   }
 
   /**
@@ -425,9 +471,7 @@ class Zettlr {
     */
   setCurrentDir (d) {
     // Set the dir
-    this.currentDir = d
-    this.ipc.send('dir-set-current', (d) ? d.hash : null)
-    global.config.set('lastDir', (d) ? d.hash : null)
+    this._fsal.setOpenDirectory(d)
   }
 
   /**
@@ -446,6 +490,8 @@ class Zettlr {
       // change event and will set in motion all other necessary processes.
       this._fsal.openFile(file)
       global.recentDocs.add(this._fsal.getMetadataFor(file))
+      // Also, add to last opened files to persist during reboots
+      global.config.addFile(file.path)
       await this.sendFile(file.hash)
     } else {
       global.log.error('Could not find file', arg)
@@ -464,6 +510,7 @@ class Zettlr {
   closeFile (file) {
     // Same as with openFile
     this._fsal.closeFile(file)
+    global.config.removeFile(file.path)
   }
 
   /**
@@ -558,7 +605,7 @@ class Zettlr {
     * Get the current directory.
     * @return {ZettlrDir} Current directory.
     */
-  getCurrentDir () { return this.currentDir }
+  getCurrentDir () { return this._fsal.getOpenDirectory() }
 
   /**
     * Return the current file.

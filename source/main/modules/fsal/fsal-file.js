@@ -15,11 +15,14 @@
 const fs = require('fs').promises
 const path = require('path')
 const hash = require('../../../common/util/hash')
+const search = require('./search-file')
 const countWords = require('../../../common/util/count-words')
 const extractYamlFrontmatter = require('../../../common/util/extract-yaml-frontmatter')
+const { shell } = require('electron')
 
-// This is a list of all possible Pandoc Frontmatter
-// variables that Zettlr may make use of
+// Here are all supported variables for Pandoc:
+// https://pandoc.org/MANUAL.html#variables
+// Below is a selection that Zettlr may use
 const FRONTMATTER_VARS = [
   'title',
   'subtitle',
@@ -58,41 +61,33 @@ function cacheFile (origFile, cacheAdapter) {
   cacheAdapter.set(cache.hash, cache)
 }
 
-module.exports = {
-  'metadata': function (fileObject) {
-    return {
-      // By only passing the hash, the object becomes
-      // both lean AND it can be reconstructed into a
-      // circular structure with NO overheads in the
-      // renderer.
-      'parent': (fileObject.parent) ? fileObject.parent.hash : null,
-      'dir': fileObject.dir,
-      'path': fileObject.path,
-      'name': fileObject.name,
-      'hash': fileObject.hash,
-      'ext': fileObject.ext,
-      'id': fileObject.id,
-      'tags': fileObject.tags,
-      'type': fileObject.type,
-      'wordCount': fileObject.wordCount,
-      'charCount': fileObject.charCount,
-      'target': fileObject.target,
-      'modtime': fileObject.modtime,
-      'creationtime': fileObject.creationtime,
-      'frontmatter': fileObject.frontmatter,
-      'linefeed': fileObject.linefeed
-    }
-  },
-  'load': async function (fileObject) {
-    // Loads the content of a file from disk
-    return fs.readFile(fileObject.path, { encoding: 'utf8' })
-  },
-  'save': async function (fileObject, content) {
-    return fs.writeFile(fileObject.path, content)
+function metadata (fileObject) {
+  return {
+    // By only passing the hash, the object becomes
+    // both lean AND it can be reconstructed into a
+    // circular structure with NO overheads in the
+    // renderer.
+    'parent': (fileObject.parent) ? fileObject.parent.hash : null,
+    'dir': fileObject.dir,
+    'path': fileObject.path,
+    'name': fileObject.name,
+    'hash': fileObject.hash,
+    'ext': fileObject.ext,
+    'id': fileObject.id,
+    'tags': fileObject.tags,
+    'type': fileObject.type,
+    'wordCount': fileObject.wordCount,
+    'charCount': fileObject.charCount,
+    'target': fileObject.target,
+    'modtime': fileObject.modtime,
+    'creationtime': fileObject.creationtime,
+    'frontmatter': fileObject.frontmatter,
+    'linefeed': fileObject.linefeed
   }
 }
 
-module.exports.parse = async function (filePath, cache, parent = null) {
+async function parseFile (filePath, cache, parent = null) {
+  // First of all, prepare the file descriptor
   let file = {
     'parent': parent,
     'dir': path.dirname(filePath), // Containing dir
@@ -109,13 +104,14 @@ module.exports.parse = async function (filePath, cache, parent = null) {
     'modtime': 0, // Modification time
     'creationtime': 0, // Creation time
     'linefeed': '\n',
-    'frontmatter': {}, // May contain frontmatter variables
+    'frontmatter': undefined, // May contain frontmatter variables
     // This variable is only used to transfer the file contents to and from
     // the renderer. It will be empty all other times, because otherwise the
     // RAM will fill up pretty fast.
     'content': ''
   }
 
+  // In any case, we need the most recent times.
   try {
     // Get lstat
     let stat = await fs.lstat(filePath)
@@ -130,15 +126,25 @@ module.exports.parse = async function (filePath, cache, parent = null) {
   // let's check if the file has been changed
   if (cache.has(file.hash)) {
     let cachedFile = cache.get(file.hash)
-    if (cachedFile.modtime === file.modtime) {
-      // Cool, apply cache and return immediately!
-      applyCache(file, cachedFile)
-      return file
-    }
-  } // Else: Parse and add later
+    // If the modtime is still the same, we can apply the cache
+    if (cachedFile.modtime === file.modtime) applyCache(file, cachedFile)
+  } else {
+    // Read in the file, parse the contents and make sure to cache the file
+    let content = await fs.readFile(filePath, { encoding: 'utf8' })
+    parseFileContents(file, content)
+    cacheFile(file, cache)
+  }
 
-  let content = await fs.readFile(filePath, { encoding: 'utf8' })
+  // Get the target, if applicable
+  file.target = global.targets.get(file.hash)
 
+  // Finally, report the tags
+  global.tags.report(file.tags)
+
+  return file
+}
+
+function parseFileContents (file, content) {
   // Now parse that thing
   let idStr = global.config.get('zkn.idRE')
   // Make sure the ID definitely has at least one
@@ -157,13 +163,13 @@ module.exports.parse = async function (filePath, cache, parent = null) {
   let match
   // Get the word and character count
   file.wordCount = countWords(content)
-  file.charCount = content.length
+  file.charCount = countWords(content, true)
 
   // Extract a potential YAML frontmatter
+  file.frontmatter = undefined // Reset first
   let frontmatter = extractYamlFrontmatter(content)
   if (frontmatter) {
-    // Here are all supported variables for Pandoc:
-    // https://pandoc.org/MANUAL.html#variables
+    if (!file.frontmatter) file.frontmatter = {}
     for (let [ key, value ] of Object.entries(frontmatter)) {
       if (FRONTMATTER_VARS.includes(key)) {
         file.frontmatter[key] = value
@@ -177,11 +183,9 @@ module.exports.parse = async function (filePath, cache, parent = null) {
 
   // Determine linefeed to preserve on saving so that version control
   // systems don't complain.
-  if (/\r\n/.test(content)) {
-    file.linefeed = '\r\n'
-  } else if (/\n\r/.test(content)) {
-    file.linefeed = '\n\r'
-  }
+  file.linefeed = '\n'
+  if (/\r\n/.test(content)) file.linefeed = '\r\n'
+  if (/\n\r/.test(content)) file.linefeed = '\n\r'
 
   // Makes footnotes unique by prefixing them with this file's hash (which is unique)
   // Pandoc will make sure the footnotes are numbered correctly.
@@ -191,6 +195,7 @@ module.exports.parse = async function (filePath, cache, parent = null) {
   // }
 
   // Now read all tags
+  file.tags = [] // Reset tags
   while ((match = tagRE.exec(mdWithoutCode)) != null) {
     let tag = match[1]
     tag = tag.replace(/#/g, '') // Prevent headings levels 2-6 from showing up in the tag list
@@ -198,15 +203,12 @@ module.exports.parse = async function (filePath, cache, parent = null) {
   }
 
   // Merge possible keywords from the frontmatter
-  if (file.frontmatter.hasOwnProperty('keywords')) {
+  if (file.frontmatter && file.frontmatter.hasOwnProperty('keywords')) {
     file.tags = file.tags.concat(file.frontmatter.keywords)
   }
 
   // Remove duplicates
   file.tags = [...new Set(file.tags)]
-
-  // Report the tags to the global database
-  if (file.tags.length > 0) global.tags.report(file.tags)
 
   // Assume an ID in the file name (takes precedence over IDs in the file's
   // content)
@@ -221,11 +223,60 @@ module.exports.parse = async function (filePath, cache, parent = null) {
   }
 
   if ((match != null) && (match[1].substr(-(linkEnd.length)) !== linkEnd)) {
-    file.id = match[1] || ''
+    file.id = match[1]
+  } else {
+    file.id = '' // Remove the file id again
   }
+}
 
-  // Make sure to cache that thing
-  cacheFile(file, cache)
+async function searchFile (fileObject, terms) {
+  // Initialise the content variables (needed to check for NOT operators)
+  let cnt = await fs.readFile(fileObject.path, { encoding: 'utf8' })
+  return search(fileObject, terms, cnt)
+}
 
-  return file
+module.exports = {
+  'metadata': function (fileObject) {
+    return metadata(fileObject)
+  },
+  'load': async function (fileObject) {
+    // Loads the content of a file from disk
+    return fs.readFile(fileObject.path, { encoding: 'utf8' })
+  },
+  'save': async function (fileObject, content) {
+    await fs.writeFile(fileObject.path, content)
+    // Make sure to keep the file object itself as well as the tags updated
+    global.tags.remove(fileObject.tags)
+    parseFileContents(fileObject, content)
+    global.tags.report(fileObject.tags)
+  },
+  'rename': async function (fileObject, options) {
+    let oldPath = fileObject.path
+    let newPath = path.join(path.dirname(fileObject.path), options.name)
+    await fs.rename(oldPath, newPath)
+    // Now update the object
+    fileObject.path = newPath
+    fileObject.hash = hash(newPath)
+    fileObject.name = options.name
+  },
+  'remove': async function (fileObject) {
+    // await fs.unlink(fileObject.path)
+    if (shell.moveItemToTrash(fileObject.path) && fileObject.parent) {
+      // Splice it from the parent directory
+      fileObject.parent.children.splice(fileObject.parent.children.indexOf(fileObject), 1)
+    }
+  },
+  'parse': async function (filePath, cache, parent = null) {
+    return parseFile(filePath, cache, parent)
+  },
+  'updateFile': function (fileObject, newContents) {
+    // Updates a file object with new contents
+    return parseFileContents(fileObject, newContents)
+  },
+  'setTarget': function (fileObject, target) {
+    fileObject.target = target
+  },
+  'search': async function (fileObject, terms) {
+    return searchFile(fileObject, terms)
+  }
 }

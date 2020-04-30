@@ -13,7 +13,6 @@
  */
 
 const ZettlrCommand = require('./zettlr-command')
-const { trans } = require('../../common/lang/i18n')
 const generateFilename = require('../../common/util/generate-filename')
 
 class SaveFile extends ZettlrCommand {
@@ -35,8 +34,6 @@ class SaveFile extends ZettlrCommand {
       return false
     }
 
-    console.log('Saving file')
-
     // Update word count
     this._app.stats.updateWordCount(file.wordcount || 0)
 
@@ -56,7 +53,7 @@ class SaveFile extends ZettlrCommand {
       })
       this._app.clearModified()
       // Re-send the file
-      this._app.updatePaths() // TODO: Only send the file, if possible.
+      global.application.fileUpdate(realFile.hash, global.application.findFile(realFile.hash))
     } catch (e) {
       global.log.error(`Error writing file ${realFile.name}!`, e)
     }
