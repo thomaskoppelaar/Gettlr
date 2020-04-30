@@ -260,7 +260,7 @@ class GettlrRendererIPC {
 
       // Print the current file
       case 'print':
-        this.send('print')
+        this.send('print', { 'hash': this._app.getActiveFile().hash })
         break
 
       // The context menu triggers this action, so send it to the main process.
@@ -307,10 +307,6 @@ class GettlrRendererIPC {
         this._app.deleteDir(cnt)
         break
 
-      case 'dir-new-vd':
-        this._app.newVirtualDir(cnt)
-        break
-
       // Make a project from a directory
       case 'dir-new-project':
         this.send('dir-new-project', cnt)
@@ -345,16 +341,12 @@ class GettlrRendererIPC {
 
         // FILES
 
-      case 'file-set-current':
-        this._app.setCurrentFile(cnt)
-        break
-
       case 'file-open':
         this._app.openFile(cnt)
         break
 
       case 'file-close':
-        this._app.closeFile()
+        this._app.closeFile(cnt.hash)
         break
 
       case 'file-save':
@@ -364,6 +356,16 @@ class GettlrRendererIPC {
       // Replace all properties of a file (e.g. on rename)
       case 'file-replace':
         this._app.replaceFile(cnt.hash, cnt.file)
+        break
+
+      case 'sync-files':
+        this._app.getEditor().syncFiles(cnt)
+        break
+
+      case 'file-request-sync':
+        // This is the answer from main with a file and its contents which
+        // we simply need to add to the open files
+        this._app.getEditor().addFileToOpen(cnt)
         break
 
       // Replace a full directory tree (e.g., on rename or modification of the children)
@@ -430,8 +432,8 @@ class GettlrRendererIPC {
         break
 
       case 'export':
-        if (this._app.getCurrentFile() != null) {
-          this._app.getBody().displayExport(this._app.getCurrentFile())
+        if (this._app.getActiveFile() != null) {
+          this._app.getBody().displayExport(this._app.getActiveFile())
         }
         break
 

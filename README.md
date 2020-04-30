@@ -50,5 +50,5 @@ Another useful command is `npm run start`, which you can use to start the applic
 
 ## License
 
-This software is licensed via the GNU GPL v3-License.
+This software is licensed via the [GNU GPL v3-License](https://www.gnu.org/licenses/gpl-3.0.en.html).
 

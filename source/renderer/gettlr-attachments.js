@@ -126,7 +126,7 @@ class GettlrAttachments {
     * @return {void} (Point of) No return.
     */
    displayTOC () {
-    if (this._renderer.getCurrentFile() === null) return
+    //if (this._renderer.getCurrentFile() === null) return
     this._tocContainer.text('')
 
     let toc = this._renderer.getEditor().buildTOC()

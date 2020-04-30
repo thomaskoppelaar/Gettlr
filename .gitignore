@@ -19,3 +19,16 @@ eslint_report.htm
 
 nohup.out
 gettlr.code-workspace
+
+# Taken from https://www.gitignore.io/api/visualstudiocode
+
+### VisualStudioCode ###
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+### VisualStudioCode Patch ###
+# Ignore all local history of files
+.history

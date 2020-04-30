@@ -2,16 +2,29 @@
  * MAIN CSS FOR DARK THEMING
  */
 
-// CodeMirror scrollbar annotations
-.sb-annotation { background-color: var(--bg-annotation-dark); }
+// DARK STYLES
+body.dark {
+  background-color: var(--grey-7);
 
-::-webkit-scrollbar-thumb { background-color:var(--c-primary-shade); }
-::-webkit-scrollbar-thumb:window-inactive { background-color: darken(@c-primary-shade, 20%); }
+  // CodeMirror scrollbar annotations
+  .sb-annotation {
+    background-color: var(--bg-annotation-dark);
+  }
 
-.dragger {
-    color:white;
-    background-color:var(--grey-6);
-}
+  ::-webkit-scrollbar-thumb {
+    background-color: var(--c-primary-shade);
+  }
+
+  ::-webkit-scrollbar-thumb:window-inactive {
+    background-color: darken(@c-primary-shade, 20%);
+  }
+
+  .dragger {
+    color: white;
+    background-color: var(--grey-6);
+  }
+
+  // To make opacity to toolbar better looking
 
 // To make it appear as if the editor is larger than thought,
 // by colouring the sidebar resizer's background according to
@@ -20,32 +33,37 @@
   #sidebar-resize, #sidebar-inner-resizer {
     background-color: var(--grey-8);
 
-    &:hover::after {
-      background-color: rgba(255, 255, 255, 0.4);
+      &:hover::after {
+        background-color: rgba(255, 255, 255, 0.4);
+      }
+    }
+
+    #sidebar-inner-resizer {
+      background-color: transparent;
     }
   }
 
-  #sidebar-inner-resizer { background-color: transparent; }
+  // Now all other, bigger stylings.
+
+  @import "file-tree.less";
+
+  @import "file-list.less";
+
+  @import "toolbar.less";
+
+  @import "editor.less";
+
+  @import "document-tabs.less";
+
+  @import "codemirror.less";
+
+  @import "popup.less";
+
+  @import "attachments.less";
+
+  @import "quicklook.less";
+
+  @import "window-controls.less";
+
+  @import "modal.less";
 }
-
-// Now all other, bigger stylings.
-
-@import "file-tree.less";
-
-@import "file-list.less";
-
-@import "toolbar.less";
-
-@import "editor.less";
-
-@import "codemirror.less";
-
-@import "popup.less";
-
-@import "attachments.less";
-
-@import "quicklook.less";
-
-@import "window-controls.less";
-
-@import "modal.less";

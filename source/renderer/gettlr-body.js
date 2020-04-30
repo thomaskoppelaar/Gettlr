@@ -106,8 +106,8 @@ class GettlrBody {
     $(document).on('keydown', (event) => {
       let isDarwin = $('body').hasClass('darwin')
       let cmdOrCtrl = (isDarwin && event.metaKey) || (!isDarwin && event.ctrlKey)
-      let focusEditorShortcut = (cmdOrCtrl && event.shiftKey && event.key === 'e')
-      let focusSidebarShortcut = (cmdOrCtrl && event.shiftKey && event.key === 't')
+      let focusEditorShortcut = (cmdOrCtrl && event.shiftKey && event.which === 69)
+      let focusSidebarShortcut = (cmdOrCtrl && event.shiftKey && event.which === 84)
       if (focusEditorShortcut) { // Cmd/Ctrl+Shift+E
         // Obviously, focus the editor
         this._renderer.getEditor().getEditor().focus()
@@ -122,13 +122,13 @@ class GettlrBody {
     global.notifyError = (msg) => { this.notifyError(msg) }
 
     // Afterwards, activate the event listeners of the window controls
-    $('.windows-window-controls .minimise, .linux-window-controls .minimise').click((e) => {
+    $('.windows-window-controls .minimise').click((e) => {
       global.ipc.send('win-minimise')
     })
-    $('.windows-window-controls .resize, .linux-window-controls .maximise').click((e) => {
+    $('.windows-window-controls .resize').click((e) => {
       global.ipc.send('win-maximise')
     })
-    $('.windows-window-controls .close, .linux-window-controls .close').click((e) => {
+    $('.windows-window-controls .close').click((e) => {
       global.ipc.send('win-close')
     })
   }
@@ -145,7 +145,7 @@ class GettlrBody {
 
     // On config change, change the theme according to the settings
     let href = $('link#theme-css').attr('href')
-    href = href.replace(/bielefeld|berlin|frankfurt|karl-marx-stadt/, newTheme)
+    href = href.replace(/bielefeld|berlin|frankfurt|karl-marx-stadt|bordeaux/, newTheme)
     $('link#theme-css').attr('href', href)
     this._renderer.getEditor().refresh()
     this._currentTheme = newTheme
@@ -156,7 +156,7 @@ class GettlrBody {
     * @param  {GettlrDir} dir A directory object
     * @return {void}     Nothing to return.
     */
-  requestFileName (dir) {
+  requestFileName (dir, newFileButton = false) {
     // No directory selected.
     if (!dir) return
 
@@ -170,15 +170,15 @@ class GettlrBody {
       return global.ipc.send('file-new', { 'name': generateFileName(), 'hash': dir.hash })
     }
 
-    // It was a virtual directory, not an actual directory.
-    if (dir.type !== 'directory') return
-
     let cnt = makeTemplate('popup', 'textfield', {
       'val': generateFileName(),
       'placeholder': trans('dialog.file_new.placeholder')
     })
 
-    this._currentPopup = popup($('.button.file-new'), cnt, (form) => {
+    // If the newFileButton has been clicked, center the popup there, not someplace else
+    let targetElement = (newFileButton) ? $('#document-tabs .add-new-file') : $('.button.file-new')
+
+    this._currentPopup = popup(targetElement, cnt, (form) => {
       if (form) {
         global.ipc.send('file-new', { 'name': form[0].value, 'hash': dir.hash })
       }
@@ -232,9 +232,6 @@ class GettlrBody {
     // Prevent multiple popups
     if (this._currentPopup) this._currentPopup.close(true)
 
-    // It was a virtual directory, not an actual directory.
-    if (dir.type !== 'directory') return
-
     let elem
 
     // Selection method stolen from requestNewDirName
@@ -262,30 +259,6 @@ class GettlrBody {
         global.ipc.send('dir-new', { 'name': form[0].value, 'hash': dir.hash })
       }
       this._currentPopup = null // Reset current popup
-    })
-  }
-
-  /**
-    * Requests a directory name for a new virtual directory
-    * @param  {GettlrDir} dir The parent directory object.
-    * @return {void}     Nothing to return.
-    */
-  requestVirtualDirName (dir) {
-    if (!dir) return // No directory selected.
-
-    // Prevent multiple popups
-    if (this._currentPopup) this._currentPopup.close(true)
-
-    let cnt = makeTemplate('popup', 'textfield', {
-      'val': trans('dialog.dir_new.value'),
-      'placeholder': trans('dialog.dir_new.placeholder')
-    })
-
-    this._currentPopup = popup($(`[data-hash=${dir.hash}]`), cnt, (form) => {
-      if (form) {
-        global.ipc.send('dir-new-vd', { 'name': form[0].value, 'hash': dir.hash })
-      }
-      this._currentPopup = null
     })
   }
 
@@ -318,7 +291,8 @@ class GettlrBody {
   requestNewFileName (file) {
     if (this._currentPopup) this._currentPopup.close(true) // Prevent multiple popups
     let elem = ''
-    if (this._renderer.getCurrentFile() != null && this._renderer.getCurrentFile().hash === file.hash) {
+    if (this._renderer.getActiveFile() != null && this._renderer.getActiveFile().hash === file.hash) {
+      // TODO: Need to make this appropriate for all open files (open popup under their respective tabs)
       elem = $('.button.file-rename')
     } else {
       elem = $('#file-list').find('div[data-hash="' + file.hash + '"]').first()
@@ -623,7 +597,7 @@ class GettlrBody {
     */
   displayFind () {
     if (this._currentPopup) this._currentPopup.close(true)
-    if (this._renderer.getCurrentFile() === null) return
+    if (this._renderer.getActiveFile() == null) return
     let regexRE = /^\/.+\/[gimy]{0,4}$/ // It's meta, dude!
 
     // Create the popup template. Make sure we pre-set the value, if given.
@@ -775,102 +749,102 @@ class GettlrBody {
     })
   }
 
-  // /**
-  //   * Displays a table of content.
-  //   * @return {void} (Point of) No return.
-  //   */
-  // displayTOC () {
-  //   if (this._currentPopup) this._currentPopup.close(true) // Prevent multiple popups
-  //   if (this._renderer.getCurrentFile() === null) return
+  /**
+    * Displays a table of content.
+    * @return {void} (Point of) No return.
+    */
+  displayTOC () {
+    if (this._currentPopup) this._currentPopup.close(true) // Prevent multiple popups
+    if (this._renderer.getActiveFile() == null) return
 
-  //   let toc = this._renderer.getEditor().buildTOC()
+    let toc = this._renderer.getEditor().buildTOC()
 
-  //   if (toc.length === 0) return
+    if (toc.length === 0) return
 
-  //   let idUniquifier = Date.now()
+    let idUniquifier = Date.now()
 
-  //   let cnt = $('<div id="toc-container-' + idUniquifier + '">')
-  //   let h1 = 0
-  //   let h2 = 0
-  //   let h3 = 0
-  //   let h4 = 0
-  //   let h5 = 0
-  //   let h6 = 0
-  //   for (let entry of toc) {
-  //     let level = ''
-  //     switch (entry.level) {
-  //       case 1:
-  //         h1++
-  //         h2 = h3 = h4 = h5 = h6 = 0
-  //         level = h1
-  //         break
-  //       case 2:
-  //         h2++
-  //         h3 = h4 = h5 = h6 = 0
-  //         level = [ h1, h2 ].join('.')
-  //         break
-  //       case 3:
-  //         h3++
-  //         h4 = h5 = h6 = 0
-  //         level = [ h1, h2, h3 ].join('.')
-  //         break
-  //       case 4:
-  //         h4++
-  //         h5 = h6 = 0
-  //         level = [ h1, h2, h3, h4 ].join('.')
-  //         break
-  //       case 5:
-  //         h5++
-  //         h6 = 0
-  //         level = [ h1, h2, h3, h4, h5 ].join('.')
-  //         break
-  //       case 6:
-  //         h6++
-  //         level = [ h1, h2, h3, h4, h5, h6 ].join('.')
-  //     }
+    let cnt = $('<div id="toc-container-' + idUniquifier + '">')
+    let h1 = 0
+    let h2 = 0
+    let h3 = 0
+    let h4 = 0
+    let h5 = 0
+    let h6 = 0
+    for (let entry of toc) {
+      let level = ''
+      switch (entry.level) {
+        case 1:
+          h1++
+          h2 = h3 = h4 = h5 = h6 = 0
+          level = h1
+          break
+        case 2:
+          h2++
+          h3 = h4 = h5 = h6 = 0
+          level = [ h1, h2 ].join('.')
+          break
+        case 3:
+          h3++
+          h4 = h5 = h6 = 0
+          level = [ h1, h2, h3 ].join('.')
+          break
+        case 4:
+          h4++
+          h5 = h6 = 0
+          level = [ h1, h2, h3, h4 ].join('.')
+          break
+        case 5:
+          h5++
+          h6 = 0
+          level = [ h1, h2, h3, h4, h5 ].join('.')
+          break
+        case 6:
+          h6++
+          level = [ h1, h2, h3, h4, h5, h6 ].join('.')
+      }
 
-  //     cnt.append(
-  //       $('<a>').text(level + '. ' + entry.text)
-  //         .attr('data-line', entry.line)
-  //         .attr('href', '#')
-  //         .addClass('toc-link')
-  //     )
-  //   }
+      cnt.append(
+        $('<a>').text(level + '. ' + entry.text)
+          .attr('data-line', entry.line)
+          .attr('href', '#')
+          .addClass('toc-link')
+      )
+    }
 
-  //   this._currentPopup = popup($('.button.show-toc'), cnt)
+    this._currentPopup = popup($('.button.show-toc'), cnt)
 
-  //   // On click jump to line
-  //   $('.toc-link').click((event) => {
-  //     let elem = $(event.target)
-  //     this._renderer.getEditor().jtl(elem.attr('data-line'))
-  //   })
+    // On click jump to line
+    $('.toc-link').click((event) => {
+      let elem = $(event.target)
+      this._renderer.getEditor().jtl(elem.attr('data-line'))
+    })
 
-  //   // Sortable
-  //   $('#toc-container-' + idUniquifier).sortable({
-  //     axis: 'y',
-  //     items: '> .toc-link',
-  //     update: (event, ui) => {
-  //       // The user has dropped the item someplace else.
-  //       let newIndex = ui.item.index()
-  //       let originalLine = parseInt(ui.item.attr('data-line'))
-  //       let sumLength = $('#toc-container-' + idUniquifier + ' > .toc-link').length
-  //       if (newIndex < sumLength - 1) {
-  //         let elementBelow = $('#toc-container-' + idUniquifier + ' > .toc-link').eq(newIndex + 1)
-  //         let aboveLine = parseInt(elementBelow.attr('data-line'))
-  //         this._renderer.getEditor().moveSection(originalLine, aboveLine)
-  //       } else {
-  //         this._renderer.getEditor().moveSection(originalLine, -1)
-  //       }
+    // Sortable
+    $('#toc-container-' + idUniquifier).sortable({
+      axis: 'y',
+      items: '> .toc-link',
+      update: (event, ui) => {
+        // The user has dropped the item someplace else.
+        let newIndex = ui.item.index()
+        let originalLine = parseInt(ui.item.attr('data-line'))
+        let sumLength = $('#toc-container-' + idUniquifier + ' > .toc-link').length
+        if (newIndex < sumLength - 1) {
+          let elementBelow = $('#toc-container-' + idUniquifier + ' > .toc-link').eq(newIndex + 1)
+          let aboveLine = parseInt(elementBelow.attr('data-line'))
+          this._renderer.getEditor().moveSection(originalLine, aboveLine)
+        } else {
+          this._renderer.getEditor().moveSection(originalLine, -1)
+        }
 
-  //       // Cool, now destroy the sortable, rebuild the TOC, and re-fill the div
-  //       // again.
-  //       $('#toc-container-' + idUniquifier).sortable('destroy')
-  //       this._currentPopup.close()
-  //       this._currentPopup = null
-  //       this.displayTOC()
-  //     }
-  //   })
-  // }
+        // Cool, now destroy the sortable, rebuild the TOC, and re-fill the div
+        // again.
+        $('#toc-container-' + idUniquifier).sortable('destroy')
+        this._currentPopup.close()
+        this._currentPopup = null
+        this.displayTOC()
+      }
+    })
+  }
 
   displayDevClipboard () {
     // DevClipboard
